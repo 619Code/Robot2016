@@ -15,7 +15,6 @@ import org.usfirst.frc.team619.subsystems.DriverStation;
 import org.usfirst.frc.team619.subsystems.drive.RobotDriveBase;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
