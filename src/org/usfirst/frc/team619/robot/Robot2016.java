@@ -8,7 +8,7 @@
 
 package org.usfirst.frc.team619.robot;
 
-import org.usfirst.frc.team619.hardware.Talon;
+import org.usfirst.frc.team619.hardware.CANTalon;
 import org.usfirst.frc.team619.logic.ThreadManager;
 import org.usfirst.frc.team619.logic.mapping.RobotMappingThread;
 import org.usfirst.frc.team619.subsystems.DriverStation;
@@ -38,10 +38,10 @@ public class Robot2016 extends IterativeRobot {
 	RobotDriveBase driveBase;
 	
 	//Hardware
-	Talon leftMotor;
-	Talon rightMotor;
-	Talon leftMotor2;
-	Talon rightMotor2;
+	CANTalon leftMotor;
+	CANTalon rightMotor;
+	CANTalon leftMotor2;
+	CANTalon rightMotor2;
 	
 	//Control
 	
@@ -66,10 +66,6 @@ public class Robot2016 extends IterativeRobot {
         driverStation = new DriverStation(1, 2);
         
         //plug into pwm section on RoboRio
-        leftMotor = new Talon(1);
-        leftMotor2 = new Talon(2);
-        rightMotor = new Talon(3);
-        rightMotor2 = new Talon(4);
         
         //plug into DIO on RoboRio
         
@@ -80,6 +76,10 @@ public class Robot2016 extends IterativeRobot {
         //plug into pneumatics module
         
         //CAN
+        leftMotor = new CANTalon(1);
+        leftMotor2 = new CANTalon(2);
+        rightMotor = new CANTalon(3);
+        rightMotor2 = new CANTalon(4);
         
         //subsystems
         driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);
@@ -98,7 +98,7 @@ public class Robot2016 extends IterativeRobot {
     public void teleopInit(){
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
     	
-    	driveThread = new RobotMappingThread(driveBase, driverStation, 15, threadManager);
+    	driveThread = new RobotMappingThread(driveBase, driverStation, 0, threadManager);
     	
     	driveThread.start();
     }
