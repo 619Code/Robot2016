@@ -25,11 +25,11 @@ public class RobotMappingThread extends RobotThread {
 			leftScalePercent = 0.3;
 		}
 		
-		double leftPercent = driverStation.getLeftJoystick().getAxis(Joystick.Axis.AXIS_Y) * leftScalePercent;
-		double rightPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.AXIS_Y) * leftScalePercent;
+		double leftPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * leftScalePercent;
+		double rightPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * leftScalePercent;
 
-		driveBase.setLeftWheels(leftPercent);
-		driveBase.setRightWheels(-rightPercent);
+		driveBase.setLeftWheels(-leftPercent);
+		driveBase.setRightWheels(rightPercent);
 		
 	}
 

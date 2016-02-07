@@ -34,7 +34,27 @@ public class Joystick {
         public static final int STICK_MAGNITUDE = 4;
         public static final int AXIS_THROTTLE = AXIS_Z+1; // This is the correct mapping on Attack 3's and the Saitek joysticks. Might want to change this for other joysticks
         
-        public static final int MAX_AXIS_VALUE = AXIS_THROTTLE + 1;
+        // For use with logitech controllers
+        public static final int LEFT_AXIS_X = 5;
+        public static final int LEFT_AXIS_Y = 6;
+        public static final int LEFT_TRIGGER = 7;
+        public static final int RIGHT_TRIGGER = 8;
+        public static final int RIGHT_AXIS_X = 9;
+        public static final int RIGHT_AXIS_Y = 10;
+        
+        public static final int MAX_AXIS_VALUE = RIGHT_AXIS_Y + 1;
+    }
+    
+    public static class Pov{
+    	public static final int POV_CENTER = 0;
+    	public static final int POV_UP = 1;
+    	public static final int POV_RIGHT = 2;
+    	public static final int POV_DOWN = 3;
+    	public static final int POV_LEFT = 4;
+    	public static final int POV_UP_RIGHT = 5;
+    	public static final int POV_DOWN_RIGHT = 6;
+    	public static final int POV_DOWN_LEFT = 7;
+    	public static final int POV_UP_LEFT = 8;
     }
     
     protected edu.wpi.first.wpilibj.Joystick joystick;
@@ -127,6 +147,24 @@ public class Joystick {
             case Axis.STICK_MAGNITUDE:
                 val = joystick.getMagnitude();
                 break;
+            case Axis.LEFT_AXIS_X:
+            	val = joystick.getRawAxis(0);
+            	break;
+            case Axis.LEFT_AXIS_Y:
+            	val = joystick.getRawAxis(1);
+            	break;
+            case Axis.LEFT_TRIGGER:
+            	val = joystick.getRawAxis(2);
+            	break;
+            case Axis.RIGHT_TRIGGER:
+            	val = joystick.getRawAxis(3);
+            	break;
+            case Axis.RIGHT_AXIS_X:
+            	val = joystick.getRawAxis(4);
+            	break;
+            case Axis.RIGHT_AXIS_Y:
+            	val = joystick.getRawAxis(5);
+            	break;
             default:
                 return 0;
         }
@@ -134,6 +172,32 @@ public class Joystick {
         if(deadband > Math.abs(val)) val = 0;
         
         return val;
+    }
+    
+    public boolean getPOV(int pov) {
+    	switch(pov) {
+    		case Pov.POV_CENTER:                   // If no button is pressed, -1 is returned
+    			return (joystick.getPOV(0) == -1); // 0 degrees is up using polar cordinates, rotating clockwise
+    		case Pov.POV_UP:
+    			return (joystick.getPOV(0) == 0);
+    		case Pov.POV_UP_RIGHT:
+    			return (joystick.getPOV(0) == 45);
+    		case Pov.POV_RIGHT:
+    			return (joystick.getPOV(0) == 90);
+    		case Pov.POV_DOWN_RIGHT:
+    			return (joystick.getPOV(0) == 135);
+    		case Pov.POV_DOWN:
+    			return (joystick.getPOV(0) == 180);
+    		case Pov.POV_DOWN_LEFT:
+    			return (joystick.getPOV(0) == 225);
+    		case Pov.POV_LEFT:
+    			return (joystick.getPOV(0) == 270);
+    		case Pov.POV_UP_LEFT:
+    			return (joystick.getPOV(0) == 315); 
+    		default:
+    			System.out.println("Invalid POV Direction: " + pov);
+    			return false;
+    	}
     }
     
     public void setReversed(int axis, boolean isReversed){

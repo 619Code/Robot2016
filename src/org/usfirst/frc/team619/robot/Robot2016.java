@@ -76,10 +76,10 @@ public class Robot2016 extends IterativeRobot {
         //plug into pneumatics module
         
         //CAN
-        leftMotor = new CANTalon(1);
-        leftMotor2 = new CANTalon(2);
-        rightMotor = new CANTalon(3);
-        rightMotor2 = new CANTalon(4);
+        leftMotor = new CANTalon(2);
+        leftMotor2 = new CANTalon(3);
+        rightMotor = new CANTalon(0);
+        rightMotor2 = new CANTalon(1);
         
         //subsystems
         driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);
