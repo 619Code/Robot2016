@@ -15,6 +15,7 @@ import org.usfirst.frc.team619.subsystems.DriverStation;
 import org.usfirst.frc.team619.subsystems.drive.RobotDriveBase;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,6 +43,7 @@ public class Robot2016 extends IterativeRobot {
 	CANTalon rightMotor;
 	CANTalon leftMotor2;
 	CANTalon rightMotor2;
+	CANTalon shoot;
 	
 	//Control
 	
@@ -80,9 +82,10 @@ public class Robot2016 extends IterativeRobot {
         leftMotor2 = new CANTalon(2);
         rightMotor = new CANTalon(3);
         rightMotor2 = new CANTalon(4);
+        shoot = new CANTalon(5);
         
         //subsystems
-        driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);
+        driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2, shoot);
         
     }
 
@@ -107,6 +110,10 @@ public class Robot2016 extends IterativeRobot {
      * In general you shouldn't use this
      */
     public void autonomousPeriodic() {
+    	driveBase.setLeftWheels(1);
+    	driveBase.setRightWheels(1);
+    		Timer.delay(5);
+    	driveBase.stop();
 
     }
     /**

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team619.logic.mapping;
+   package org.usfirst.frc.team619.logic.mapping;
 
 import org.usfirst.frc.team619.hardware.Joystick;
 import org.usfirst.frc.team619.logic.RobotThread;
@@ -31,6 +31,15 @@ public class RobotMappingThread extends RobotThread {
 		driveBase.setLeftWheels(leftPercent);
 		driveBase.setRightWheels(-rightPercent);
 		
+		if (driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON1)) {
+			driveBase.autoAim();
+		}
+		else {
+			driveBase.setLeftWheels(leftPercent);
+			driveBase.setRightWheels(-rightPercent);
+		}
+		}
 	}
 
-}
+
+
