@@ -11,7 +11,11 @@ import org.usfirst.frc.team619.hardware.DigitalEncoder;
 import org.usfirst.frc.team619.hardware.I2CAccelerometer;
 import org.usfirst.frc.team619.hardware.NetworkCamera;
 
-public class SensorBase {	
+import com.ni.vision.NIVision.Image;
+
+import edu.wpi.first.wpilibj.CameraServer;
+
+public class SensorBase {
 	
 	//no need for an ArrayList of Cameras because only a max of two can be put on the Athena
 	protected Camera camera;
@@ -61,6 +65,10 @@ public class SensorBase {
 	public void startCamera(String cameraName){
 		camera = new Camera(cameraName);
 	}
+	
+	public void startCamera() {
+		camera = new Camera();
+	}
 
 	public void startNetworkCamera(){
 		networkCamera = new NetworkCamera();
@@ -72,6 +80,14 @@ public class SensorBase {
 	
 	public void turnOffNetworkCamera(){
 		networkCamera = null;
+	}
+	
+	public void closeCamera() {
+		camera.closeCamera();
+	}
+	
+	public void putImage(Image frame) {
+		CameraServer.getInstance().setImage(frame);
 	}
 	
 	public void addEncoder(DigitalEncoder sensor){
@@ -94,8 +110,12 @@ public class SensorBase {
 		this.i2cAccelerometer = i2cAccelerometer;
 	}
 	
-	public void addAthenaAccelerometer(RoboRioAccelerometer roboRioAccelerometer){
+	public void addRoboRioAccelerometer(RoboRioAccelerometer roboRioAccelerometer){
 		this.roboRioAccelerometer = roboRioAccelerometer;
+	}
+	
+	public int getCameraSession() {
+		return camera.getSession();
 	}
 	
 	public Camera getCamera(){
@@ -154,7 +174,7 @@ public class SensorBase {
 		return i2cAccelerometer;
 	}
 	
-	public RoboRioAccelerometer getAthenaAccelerometer(){
+	public RoboRioAccelerometer getRoboRioAccelerometer(){
 		return roboRioAccelerometer;
 	}
 	

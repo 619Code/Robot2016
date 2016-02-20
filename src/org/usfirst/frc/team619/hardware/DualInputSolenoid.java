@@ -1,33 +1,44 @@
 package org.usfirst.frc.team619.hardware;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class DualInputSolenoid {
 	
-	private edu.wpi.first.wpilibj.Solenoid solLeft, solRight;
+	private DoubleSolenoid solenoid;
 	
 	private long lastSetTime;
 	
-	public DualInputSolenoid(int channelLeft, int channelRight/*where solenoid plugs into on pneumatic module*/){
-		solLeft = new edu.wpi.first.wpilibj.Solenoid(channelLeft);
-		solRight = new edu.wpi.first.wpilibj.Solenoid(channelRight);
+	public DualInputSolenoid(int channelLeft, int channelRight) {
+		solenoid = new DoubleSolenoid(channelLeft, channelRight);
 		lastSetTime = System.currentTimeMillis();
 	}
 	
-	public boolean getLeft(){
-		return solLeft.get();
-	}
-	
-	public boolean getRight(){
-		return solRight.get();
-	}
-	
-	public void set(boolean on){
-		solLeft.set(on);
-		solRight.set(!on);
+	public void set(boolean on) {
+		if(on) {
+			solenoid.set(DoubleSolenoid.Value.kForward);
+		}else {
+			solenoid.set(DoubleSolenoid.Value.kReverse);
+		}
 		lastSetTime = System.currentTimeMillis();
 	}
 	
-	public long getLastSetTime(){
+	public void setOff() {
+		solenoid.set(DoubleSolenoid.Value.kOff);
+	}
+	
+	public boolean isForward() {
+		return (solenoid.get() == DoubleSolenoid.Value.kForward);
+	}
+	
+	public boolean isOn() {
+		return !(solenoid.get() == DoubleSolenoid.Value.kOff);
+	}
+	
+	public DoubleSolenoid getSolenoid() {
+		return solenoid;
+	}
+	
+	public long getLastSetTime() {
 		return lastSetTime;
 	}
 	

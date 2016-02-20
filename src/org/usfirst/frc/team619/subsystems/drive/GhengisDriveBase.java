@@ -2,19 +2,18 @@ package org.usfirst.frc.team619.subsystems.drive;
 
 import org.usfirst.frc.team619.hardware.CANTalon;
 
-public class RobotDriveBase {
+public class GhengisDriveBase {
 	
-	private CANTalon leftMotor, rightMotor, leftMotor2, rightMotor2;
-	double distance;
+	protected CANTalon leftMotor, rightMotor, leftMotor2, rightMotor2;
 	
-	public RobotDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2) {
+	public GhengisDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2) {
 		leftMotor = new CANTalon(leftMotorID);
 		rightMotor = new CANTalon(rightMotorID);
 		leftMotor2 = new CANTalon(leftMotorID2);
 		rightMotor2 = new CANTalon(rightMotorID2);
 	}
 	
-	public RobotDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2) {
+	public GhengisDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.leftMotor2 = leftMotor2;
@@ -52,5 +51,22 @@ public class RobotDriveBase {
 		leftMotor2.set(0);
 		rightMotor.set(0);
 		rightMotor2.set(0);
+	}
+	
+	public void turn(double percent) { //positive is right
+		this.setLeftWheels(percent);
+		this.setRightWheels(percent);
+	}
+	
+	public void aim(double center) {
+		double aimSpeed = 0;
+		
+		if(center > 330) {
+			aimSpeed = 0.1;
+		}else if(center < 310) {
+			aimSpeed = -0.1;
+		}
+		setLeftWheels(aimSpeed);
+		setRightWheels(aimSpeed);
 	}
 }
