@@ -57,13 +57,18 @@ public class Ghengis extends IterativeRobot {
 	CANTalon rightMotor2;
 	CANTalon dinkArm;
 	CANTalon dankArm;
+	
 	//For Linear Punch
 	CANTalon liftMotor;
 	CANTalon liftMotor2;
 	CANTalon intake;
+	
 	DualInputSolenoid release;
+	DualInputSolenoid switchMode;
+	
 	LimitSwitch frontLimit;
 	LimitSwitch backLimit;
+	LimitSwitch winchLimit;
 
 	//Control	
 	/**
@@ -87,6 +92,9 @@ public class Ghengis extends IterativeRobot {
         driverStation = new DriverStation(1, 2);
         
         //plug into pwm section on RoboRio
+        frontLimit = new LimitSwitch(0);
+        backLimit = new LimitSwitch(1);
+        winchLimit = new LimitSwitch(2);
         
         //plug into DIO on RoboRio
         
@@ -95,7 +103,8 @@ public class Ghengis extends IterativeRobot {
         //plug into Analog Input on RoboRio
         
         //plug into pneumatics module
-        release = new DualInputSolenoid(1, 2);
+        release = new DualInputSolenoid(0, 1);
+        switchMode = new DualInputSolenoid(2, 3);
         
         //CAN
         
@@ -119,7 +128,8 @@ public class Ghengis extends IterativeRobot {
         
         //subsystems
         driveBase = new GhengisDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);
-        ghengisShooter = new GhengisShooter(dinkArm, dankArm, liftMotor, liftMotor2, intake, release); //Linear Punch
+        ghengisShooter = new GhengisShooter(dinkArm, dankArm, liftMotor, liftMotor2, intake, //Linear Punch
+        		release, switchMode, frontLimit, backLimit, winchLimit);
         //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //No shooting
         //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //Flywheel, no movement
         //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //Flywheel
@@ -140,7 +150,7 @@ public class Ghengis extends IterativeRobot {
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
     	
     	driveThread = new GhengisMappingThread(vision, driveBase, driverStation, 15, threadManager);
-    	shooterThread = new ShooterMappingThread(ghengisShooter, driverStation, 15, threadManager);
+    	shooterThread = new ShooterMappingThread(vision, ghengisShooter, driverStation, 15, threadManager);
     	visionThread = new VisionThread(sensorBase, vision, 15, threadManager);
     	
     	sensorBase.startCamera();
