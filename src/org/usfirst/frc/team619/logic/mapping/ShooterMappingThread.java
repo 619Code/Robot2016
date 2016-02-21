@@ -4,7 +4,7 @@ import org.usfirst.frc.team619.hardware.Joystick;
 import org.usfirst.frc.team619.logic.RobotThread;
 import org.usfirst.frc.team619.logic.ThreadManager;
 import org.usfirst.frc.team619.subsystems.DriverStation;
-import org.usfirst.frc.team619.subsystems.GhengisShooter;
+import org.usfirst.frc.team619.subsystems.GenghisShooter;
 import org.usfirst.frc.team619.subsystems.Vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ShooterMappingThread extends RobotThread {
 	
 	protected DriverStation driverStation;
-	protected GhengisShooter ghengisShooter;
+	protected GenghisShooter genghisShooter;
 	protected Vision vision;
 	
 	private double time;
@@ -28,10 +28,10 @@ public class ShooterMappingThread extends RobotThread {
 	private boolean calibrate = false;
 	private boolean firstPass = true;
 	
-	public ShooterMappingThread(Vision vision, GhengisShooter ghengisShooter, DriverStation driverStation, int period, ThreadManager threadManager) {
+	public ShooterMappingThread(Vision vision, GenghisShooter genghisShooter, DriverStation driverStation, int period, ThreadManager threadManager) {
 		super(period, threadManager);
 		this.driverStation = driverStation;
-		this.ghengisShooter = ghengisShooter;
+		this.genghisShooter = genghisShooter;
 		this.vision = vision;
 		scalePercent = 1.0;
 	}
@@ -69,32 +69,32 @@ public class ShooterMappingThread extends RobotThread {
 		SmartDashboard.putNumber("Arm Scale Percent", scalePercent);
 		
 		//Dink and Dank arms + limits
-		if(ghengisShooter.isDankLimit()) {
+		if(genghisShooter.isDankLimit()) {
 			if(liftPercent < 0) {
-				ghengisShooter.getDankArm().set(0);
+				genghisShooter.getDankArm().set(0);
 			}else {
-				ghengisShooter.getDankArm().set(liftPercent);
+				genghisShooter.getDankArm().set(liftPercent);
 			}
 		}else {
-			ghengisShooter.getDankArm().set(liftPercent);
+			genghisShooter.getDankArm().set(liftPercent);
 		}
-		if(ghengisShooter.isDinkLimit()) {
+		if(genghisShooter.isDinkLimit()) {
 			if(liftPercent < 0) {
-				ghengisShooter.getDinkArm().set(0);
+				genghisShooter.getDinkArm().set(0);
 			}else {
-				ghengisShooter.getDinkArm().set(-liftPercent);
+				genghisShooter.getDinkArm().set(-liftPercent);
 			}
 		}else {
-			ghengisShooter.getDinkArm().set(-liftPercent);
+			genghisShooter.getDinkArm().set(-liftPercent);
 		}
 		
 		//Intake
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON4)) {
-			ghengisShooter.setFlyWheel(-1);
+			genghisShooter.setFlyWheel(-1);
 		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON1)) {
-			ghengisShooter.setFlyWheel(1);
+			genghisShooter.setFlyWheel(1);
 		}else {
-			ghengisShooter.setFlyWheel(0);
+			genghisShooter.setFlyWheel(0);
 		}
 		
 		/*
@@ -107,15 +107,15 @@ public class ShooterMappingThread extends RobotThread {
 		
 		//Kick the boulder into flywheels
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON5)) {
-			ghengisShooter.kick();
+			genghisShooter.kick();
 		}else if (driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON6)) {
-			ghengisShooter.resetKick();
+			genghisShooter.resetKick();
 		}else {
-			ghengisShooter.stopKick();
+			genghisShooter.stopKick();
 		}
 		
 		//rotate manipulator
-		ghengisShooter.setRotate(rotatePercent);
+		genghisShooter.setRotate(rotatePercent);
 		
 		/*
 		//Move LP

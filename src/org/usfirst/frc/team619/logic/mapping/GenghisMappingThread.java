@@ -4,24 +4,24 @@ import org.usfirst.frc.team619.hardware.Joystick;
 import org.usfirst.frc.team619.logic.RobotThread;
 import org.usfirst.frc.team619.logic.ThreadManager;
 import org.usfirst.frc.team619.subsystems.DriverStation;
-import org.usfirst.frc.team619.subsystems.GhengisShooter;
+import org.usfirst.frc.team619.subsystems.GenghisShooter;
 import org.usfirst.frc.team619.subsystems.Vision;
-import org.usfirst.frc.team619.subsystems.drive.GhengisDriveBase;
+import org.usfirst.frc.team619.subsystems.drive.GenghisDriveBase;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class GhengisMappingThread extends RobotThread {
+public class GenghisMappingThread extends RobotThread {
 	
 	protected DriverStation driverStation;
-	protected GhengisDriveBase driveBase;
-	protected GhengisShooter ghengisShooter;
+	protected GenghisDriveBase driveBase;
+	protected GenghisShooter genghisShooter;
 	protected Vision vision;
 	
 	private double center;
 	private double leftScalePercent;
 	private boolean releasedSpeed = true;
 	
-	public GhengisMappingThread(Vision vision, GhengisDriveBase driveBase, DriverStation driverStation, int period, ThreadManager threadManager) {
+	public GenghisMappingThread(Vision vision, GenghisDriveBase driveBase, DriverStation driverStation, int period, ThreadManager threadManager) {
 		super(period, threadManager);
 		this.vision = vision;
 		this.driverStation = driverStation;

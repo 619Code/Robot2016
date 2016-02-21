@@ -5,7 +5,7 @@ import org.usfirst.frc.team619.hardware.DualInputSolenoid;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
 import org.usfirst.frc.team619.hardware.Talon;
 
-public class GhengisShooter {
+public class GenghisShooter {
 	
 	protected CANTalon dinkArm, dankArm;
 	protected CANTalon liftMotor, liftMotor2, intake;
@@ -16,17 +16,17 @@ public class GhengisShooter {
 	
 	private boolean isWinch;
 	
-	public GhengisShooter(int dinkArmID, int dankArmID) {
+	public GenghisShooter(int dinkArmID, int dankArmID) {
 		dinkArm = new CANTalon(dinkArmID);
 		dankArm = new CANTalon(dankArmID);
 	}
 	
-	public GhengisShooter(CANTalon dinkArm, CANTalon dankArm) {
+	public GenghisShooter(CANTalon dinkArm, CANTalon dankArm) {
 		this.dinkArm = dinkArm;
 		this.dankArm = dankArm;
 	}
 	
-	public GhengisShooter(int dinkArmID, int dankArmID, int flyMotorID, int flyMotorID2, 
+	public GenghisShooter(int dinkArmID, int dankArmID, int flyMotorID, int flyMotorID2, 
 			int kickerID, int rotateID, int dankLimitID, int dinkLimitID, int kickLimitID) {
 		dinkArm = new CANTalon(dinkArmID);
 		dankArm = new CANTalon(dankArmID);
@@ -39,7 +39,7 @@ public class GhengisShooter {
 		kickLimit = new LimitSwitch(kickLimitID);
 	}
 	
-	public GhengisShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon flyMotor, CANTalon flyMotor2, 
+	public GenghisShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon flyMotor, CANTalon flyMotor2, 
 			CANTalon kicker, CANTalon rotate, LimitSwitch dankLimit, LimitSwitch dinkLimit, LimitSwitch kickLimit) {
 		this.dinkArm = dinkArm;
 		this.dankArm = dankArm;
@@ -52,7 +52,7 @@ public class GhengisShooter {
 		this.kickLimit = kickLimit;
 	}
 	
-	public GhengisShooter(int dinkArmID, int dankArmID, int liftMotorID, int liftMotorID2, int intakeID, 
+	public GenghisShooter(int dinkArmID, int dankArmID, int liftMotorID, int liftMotorID2, int intakeID, 
 			int solenoidID, int solenoidID2, int solenoidID3, int solenoidID4, int frontLimitID, int backLimitID, int winchLimitID) {
 		dinkArm = new CANTalon(dinkArmID);
 		dankArm = new CANTalon(dankArmID);
@@ -66,7 +66,7 @@ public class GhengisShooter {
 		winchLimit = new LimitSwitch(winchLimitID);
 	}
 	
-	public GhengisShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon liftMotor, CANTalon liftMotor2, CANTalon intake, 
+	public GenghisShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon liftMotor, CANTalon liftMotor2, CANTalon intake, 
 			DualInputSolenoid release, DualInputSolenoid modeSwitch, LimitSwitch frontLimit, LimitSwitch backLimit, LimitSwitch winchLimit) {
 		this.dinkArm = dinkArm;
 		this.dankArm = dankArm;

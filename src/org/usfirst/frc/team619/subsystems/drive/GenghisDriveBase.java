@@ -2,18 +2,18 @@ package org.usfirst.frc.team619.subsystems.drive;
 
 import org.usfirst.frc.team619.hardware.CANTalon;
 
-public class GhengisDriveBase {
+public class GenghisDriveBase {
 	
 	protected CANTalon leftMotor, rightMotor, leftMotor2, rightMotor2;
 	
-	public GhengisDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2) {
+	public GenghisDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2) {
 		leftMotor = new CANTalon(leftMotorID);
 		rightMotor = new CANTalon(rightMotorID);
 		leftMotor2 = new CANTalon(leftMotorID2);
 		rightMotor2 = new CANTalon(rightMotorID2);
 	}
 	
-	public GhengisDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2) {
+	public GenghisDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.leftMotor2 = leftMotor2;
