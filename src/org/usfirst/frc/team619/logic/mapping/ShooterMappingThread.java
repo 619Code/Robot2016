@@ -16,6 +16,8 @@ public class ShooterMappingThread extends RobotThread {
 	protected Vision vision;
 	
 	private double time;
+	private double time2;
+	private double kickDelay;
 	private double scalePercent;
 	private boolean isHue = true;
 	private boolean isSat = false;
@@ -23,6 +25,8 @@ public class ShooterMappingThread extends RobotThread {
 	private boolean released = true;
 	private boolean released1 = true;
 	private boolean releasedSpeed = true;
+	private boolean calibrate = false;
+	private boolean firstPass = true;
 	
 	public ShooterMappingThread(Vision vision, GhengisShooter ghengisShooter, DriverStation driverStation, int period, ThreadManager threadManager) {
 		super(period, threadManager);
@@ -33,15 +37,14 @@ public class ShooterMappingThread extends RobotThread {
 	}
 
 	protected void cycle() { //Should generally use shooter controller
-		double triggerPercent = driverStation.getLeftJoystick().getAxis(Joystick.Axis.RIGHT_TRIGGER) * 0.5;
-		time = System.currentTimeMillis();
+		time2 = System.currentTimeMillis();
 		
 		//Set LP scale percent
-		switch(driverStation.getRightJoystick().getPOV()) {
+		switch(driverStation.getLeftJoystick().getPOV()) {
 		case 45:
 		case 315:
 		case 0:
-			if(releasedSpeed && scalePercent < 1.0) {
+			if(releasedSpeed && scalePercent < 1.0 && !driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON7) && !driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON8)) {
 				scalePercent += 0.1;
 			}
 			releasedSpeed = false;
@@ -61,8 +64,44 @@ public class ShooterMappingThread extends RobotThread {
 			break;
 		}
 		double liftPercent = driverStation.getLeftJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * scalePercent;
-		SmartDashboard.putNumber("LP Scale Percent", scalePercent);
+		double rotatePercent  = driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * (-0.75);
+		SmartDashboard.putNumber("Rotate Scale Percent", scalePercent);
 		
+		if(!ghengisShooter.isDankLimit() && !ghengisShooter.isDinkLimit()) {
+			ghengisShooter.setArms(liftPercent);
+		}else if (liftPercent > 0) {
+			ghengisShooter.setArms(liftPercent);
+		}
+		
+		//Intake
+		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON4)) {
+			ghengisShooter.setFlyWheel(-1);
+		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON1)) {
+			ghengisShooter.setFlyWheel(1);
+		}else {
+			ghengisShooter.setFlyWheel(0);
+		}
+		
+		/*
+		//Kick the boulder
+		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON6)) {
+			if(firstPass) {
+				time = System.currentTimeMillis();
+			}
+		}*/
+		
+		
+		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON5)) {
+			ghengisShooter.kick();
+		}else if (driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON6)) {
+			ghengisShooter.resetKick();
+		}else {
+			ghengisShooter.stopKick();
+		}
+		//rotate manipulator
+		ghengisShooter.setRotate(rotatePercent);
+		
+		/*
 		//Move LP
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON5) && !ghengisShooter.getWinchLimit()) {
 			ghengisShooter.switchToWinch();
@@ -73,17 +112,7 @@ public class ShooterMappingThread extends RobotThread {
 			}else if(!ghengisShooter.getFrontLimit() && !ghengisShooter.getBackLimit()) {
 				ghengisShooter.setLift(liftPercent);
 			}
-		}
-		
-		//Controls dink and dank
-		if(driverStation.getLeftJoystick().getAxis(Joystick.Axis.RIGHT_TRIGGER) > 0.5) {
-			ghengisShooter.setArms(triggerPercent);
-		}else if(driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_TRIGGER) > 0.5) {
-			ghengisShooter.setArms(-triggerPercent);
-		}
-		
-		//Controls vertical movement of LP
-		
+		}		
 		
 		//Shooting
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON6)) {
@@ -98,7 +127,8 @@ public class ShooterMappingThread extends RobotThread {
 		if(time - ghengisShooter.getRelease().getLastSetTime() > 100) {
 			ghengisShooter.getRelease().setOff();
 		}
-
+		*/
+		
 		//Used for calibration of reflective tape
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON10)) { //Default
 			if(isHue) {
@@ -115,9 +145,11 @@ public class ShooterMappingThread extends RobotThread {
 		SmartDashboard.putBoolean("Edit Hue", isHue);
 		SmartDashboard.putBoolean("Edit Sat", isSat);
 		SmartDashboard.putBoolean("Edit Value", isVal);
+		SmartDashboard.putBoolean("released1", released);
+		SmartDashboard.putBoolean("released2", released1);
 
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON8)) { //Edit vision values
-			switch(driverStation.getRightJoystick().getPOV()) {
+			switch(driverStation.getLeftJoystick().getPOV()) {
 			case 45:
 			case 315:
 			case 0:
@@ -155,7 +187,7 @@ public class ShooterMappingThread extends RobotThread {
 		}
 		
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON7)) { //Edit vision values
-			switch(driverStation.getRightJoystick().getPOV()) {
+			switch(driverStation.getLeftJoystick().getPOV()) {
 			case 45:
 			case 315:
 			case 0:

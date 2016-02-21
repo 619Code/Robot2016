@@ -11,6 +11,7 @@ package org.usfirst.frc.team619.robot;
 import org.usfirst.frc.team619.hardware.CANTalon;
 import org.usfirst.frc.team619.hardware.DualInputSolenoid;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
+import org.usfirst.frc.team619.hardware.Talon;
 import org.usfirst.frc.team619.logic.ThreadManager;
 import org.usfirst.frc.team619.logic.mapping.GhengisMappingThread;
 import org.usfirst.frc.team619.logic.mapping.ShooterMappingThread;
@@ -58,7 +59,10 @@ public class Ghengis extends IterativeRobot {
 	CANTalon dinkArm;
 	CANTalon dankArm;
 	
-	//For Linear Punch
+	LimitSwitch dankLimit;
+	LimitSwitch dinkLimit;
+	
+	/*//For Linear Punch
 	CANTalon liftMotor;
 	CANTalon liftMotor2;
 	CANTalon intake;
@@ -69,6 +73,14 @@ public class Ghengis extends IterativeRobot {
 	LimitSwitch frontLimit;
 	LimitSwitch backLimit;
 	LimitSwitch winchLimit;
+	*/
+	
+	//For Flywheel
+	CANTalon flyMotor;
+	CANTalon flyMotor2;
+	CANTalon kicker;
+	Talon rotate;
+	LimitSwitch kickLimit;
 
 	//Control	
 	/**
@@ -92,47 +104,39 @@ public class Ghengis extends IterativeRobot {
         driverStation = new DriverStation(1, 2);
         
         //plug into pwm section on RoboRio
-        frontLimit = new LimitSwitch(0);
-        backLimit = new LimitSwitch(1);
-        winchLimit = new LimitSwitch(2);
+        rotate  = new Talon(0);
         
         //plug into DIO on RoboRio
+        dankLimit = new LimitSwitch(1);
+        dinkLimit = new LimitSwitch(2);
+        kickLimit = new LimitSwitch(0);
         
         //plug into I2C on RoboRio
         
         //plug into Analog Input on RoboRio
         
         //plug into pneumatics module
-        release = new DualInputSolenoid(0, 1);
-        switchMode = new DualInputSolenoid(2, 3);
         
         //CAN
-        
-        //-----------------------------------------------------------------
-        //CHECK THIS FOR ACTUAL ROBOT *** THIS IS PRACTICE BOT SETUP
-        //-----------------------------------------------------------------
-        //leftMotor = new CANTalon(2);
-        //leftMotor2 = new CANTalon(3);
-        //rightMotor = new CANTalon(0);
-        //rightMotor2 = new CANTalon(1);
         leftMotor = new CANTalon(2);
-        leftMotor2 = new CANTalon(1);
-        rightMotor = new CANTalon(3);
-        rightMotor2 = new CANTalon(0);
+        leftMotor2 = new CANTalon(3);
+        rightMotor = new CANTalon(0);
+        rightMotor2 = new CANTalon(1);
         
         dinkArm = new CANTalon(4);
         dankArm = new CANTalon(5);
-        liftMotor = new CANTalon(6);
-        liftMotor2 = new CANTalon(7);
-        intake = new CANTalon(8);
+        flyMotor = new CANTalon(6);
+        flyMotor2 = new CANTalon(7);
+        kicker = new CANTalon(8);
         
         //subsystems
         driveBase = new GhengisDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);
-        ghengisShooter = new GhengisShooter(dinkArm, dankArm, liftMotor, liftMotor2, intake, //Linear Punch
-        		release, switchMode, frontLimit, backLimit, winchLimit);
+        ghengisShooter = new GhengisShooter(dinkArm, dankArm, flyMotor, flyMotor2, kicker, //FlyWheel
+        		rotate, dankLimit, dinkLimit, kickLimit);
+        //ghengisShooter = new GhengisShooter(dinkArm, dankArm, liftMotor, liftMotor2, intake, //Linear Punch
+        //		release, switchMode, frontLimit, backLimit, winchLimit);
         //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //No shooting
         //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //Flywheel, no movement
-        //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //Flywheel
         sensorBase = new SensorBase();
         vision = new Vision();
     }
@@ -153,8 +157,10 @@ public class Ghengis extends IterativeRobot {
     	shooterThread = new ShooterMappingThread(vision, ghengisShooter, driverStation, 15, threadManager);
     	visionThread = new VisionThread(sensorBase, vision, 15, threadManager);
     	
+    	//sensorBase.startCamera("cam0");
     	sensorBase.startCamera();
     	driveThread.start();
+    	shooterThread.start();
     	visionThread.start();
     }
     
@@ -194,6 +200,6 @@ public class Ghengis extends IterativeRobot {
     	// Close the camera through NIVision. This is only used for vision processing
     	try {
     		sensorBase.closeCamera();
-    	}catch(Exception e) {}
+    	}catch (Exception e) {}
     }
 }

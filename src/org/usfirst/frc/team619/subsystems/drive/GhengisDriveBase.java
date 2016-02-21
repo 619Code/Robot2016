@@ -37,8 +37,8 @@ public class GhengisDriveBase {
 	}
 	
 	public void setLeftWheels(double leftPercent) {
-		leftMotor.set(leftPercent);
-		leftMotor2.set(leftPercent);
+		leftMotor.set(-leftPercent);
+		leftMotor2.set(-leftPercent);
 	}
 	
 	public void setRightWheels(double rightPercent) {
@@ -61,12 +61,12 @@ public class GhengisDriveBase {
 	public void aim(double center) {
 		double aimSpeed = 0;
 		
-		if(center > 330) {
-			aimSpeed = 0.1;
-		}else if(center < 310) {
-			aimSpeed = -0.1;
+		if(center > 340) {
+			aimSpeed = 0.7;
+		}else if(center < 330) {
+			aimSpeed = -0.7;
 		}
-		setLeftWheels(aimSpeed);
+		setLeftWheels(-aimSpeed);
 		setRightWheels(aimSpeed);
 	}
 }

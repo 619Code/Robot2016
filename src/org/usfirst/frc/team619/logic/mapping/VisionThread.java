@@ -38,8 +38,7 @@ public class VisionThread extends RobotThread {
 		this.sensorBase = sensorBase;
 		this.vision = vision;
 		
-    	this.vision.setHSV(80, 115, 155, 255, 20, 135);
-    	m_id = this.sensorBase.getCameraSession();
+    	this.vision.setHSV(80, 115, 200, 255, 20, 80);
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 		binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 		criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA, AREA_MINIMUM, 100.0, 0, 0);
@@ -47,6 +46,7 @@ public class VisionThread extends RobotThread {
 	
 	protected void cycle(){
 		start = System.currentTimeMillis();
+    	m_id = this.sensorBase.getCameraSession();
 		NIVision.IMAQdxGrab(m_id, frame, 1);
 		
     	GOAL_HUE_RANGE = new NIVision.Range(vision.getHueLow(), vision.getHueHigh());	//Default hue range for green LEDs on reflective tape

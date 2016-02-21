@@ -68,7 +68,7 @@ public class GhengisMappingThread extends RobotThread {
 		}
 		
 		//Auto aiming and driving
-		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON1) && !(center == -1)) {
+		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON1)) {
 			driveBase.aim(center);
 		}else {
 			driveBase.setLeftWheels(leftPercent);

@@ -20,8 +20,9 @@ public class Vision {
 	private int vHigh;
 	private double distanceInches;
 	private double totalHeight;
-	private final int castleHeight = 81;
-	private final int cameraHeight = 11; // Camera hight from the ground in inches
+	public final int castleHeight = 81;
+	public final int cameraHeight = 11; // Camera hight from the ground in inches
+	public final double targetWidth = 25.5;
 	
 	//Comparator function for sorting particles. Returns true if particle 1 is larger
 	public boolean CompareParticleSizes(ParticleReport particle1, ParticleReport particle2)
@@ -64,12 +65,11 @@ public class Vision {
 	 */
 	public double computeDistance (Image frame, ParticleReport report) {
 		double viewAngle;
-		double normalizedWidth, targetWidth;
+		double normalizedWidth;
 		NIVision.GetImageSizeResult size;
 
 		size = NIVision.imaqGetImageSize(frame);
 		normalizedWidth = 2*(report.BoundingRectRight - report.BoundingRectLeft)/size.width;
-		targetWidth = 25.5;
 		viewAngle = 90;
 
 		return targetWidth/(normalizedWidth*12*Math.tan(viewAngle*Math.PI/(180*2)));
