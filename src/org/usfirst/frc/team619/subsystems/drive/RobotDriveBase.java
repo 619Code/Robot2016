@@ -4,32 +4,16 @@ import org.usfirst.frc.team619.hardware.CANTalon;
 
 public class RobotDriveBase {
 	
-<<<<<<< HEAD:src/org/usfirst/frc/team619/subsystems/drive/GenghisDriveBase.java
 	protected CANTalon leftMotor, rightMotor, leftMotor2, rightMotor2;
 	
-	public GenghisDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2) {
-=======
-<<<<<<< HEAD
-	protected CANTalon leftMotor, rightMotor, leftMotor2, rightMotor2;
-=======
-	private CANTalon leftMotor, rightMotor, leftMotor2, rightMotor2, shoot;
-	private double distance;
-	private double center;
->>>>>>> origin/master
-	
-	public RobotDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2, int shootID) {
->>>>>>> origin/master:src/org/usfirst/frc/team619/subsystems/drive/RobotDriveBase.java
+	public RobotDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2) {
 		leftMotor = new CANTalon(leftMotorID);
 		rightMotor = new CANTalon(rightMotorID);
 		leftMotor2 = new CANTalon(leftMotorID2);
 		rightMotor2 = new CANTalon(rightMotorID2);
 	}
 	
-<<<<<<< HEAD:src/org/usfirst/frc/team619/subsystems/drive/GenghisDriveBase.java
-	public GenghisDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2) {
-=======
-	public RobotDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2, CANTalon shoot) {
->>>>>>> origin/master:src/org/usfirst/frc/team619/subsystems/drive/RobotDriveBase.java
+	public RobotDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.leftMotor2 = leftMotor2;
@@ -68,11 +52,7 @@ public class RobotDriveBase {
 		rightMotor.set(0);
 		rightMotor2.set(0);
 	}
-	
-<<<<<<< HEAD:src/org/usfirst/frc/team619/subsystems/drive/GenghisDriveBase.java
-=======
-<<<<<<< HEAD
->>>>>>> origin/master:src/org/usfirst/frc/team619/subsystems/drive/RobotDriveBase.java
+
 	public void turn(double percent) { //positive is right
 		this.setLeftWheels(percent);
 		this.setRightWheels(percent);
@@ -81,17 +61,15 @@ public class RobotDriveBase {
 	public void aim(double center) {
 		double aimSpeed = 0;
 		
-		if(center > 340) {
+		if(center > 325) {
 			aimSpeed = 0.4;
-		}else if(center < 330) {
+		}else if(center < 315) {
 			aimSpeed = -0.4;
 		}
 		setLeftWheels(-aimSpeed);
 		setRightWheels(aimSpeed);
 	}
-<<<<<<< HEAD:src/org/usfirst/frc/team619/subsystems/drive/GenghisDriveBase.java
-=======
-=======
+	
 	public void turnRight(double center) {
 		leftMotor.set(-1);
 		leftMotor2.set(-1);
@@ -106,25 +84,4 @@ public class RobotDriveBase {
 		rightMotor2.set(-1);
 	}
 	
-	public void autoAim() {
-		
-		
-		center = (camera.center() - 320)/640;
-		
-		while (center != 0) {
-
-			if (center < 0) {
-				turnRight(center);
-			}
-			else {
-				turnLeft(center);
-			}
-			 
-			
-		}
-
-	}
-	
->>>>>>> origin/master
->>>>>>> origin/master:src/org/usfirst/frc/team619/subsystems/drive/RobotDriveBase.java
 }
