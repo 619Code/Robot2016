@@ -13,13 +13,13 @@ import org.usfirst.frc.team619.hardware.DualInputSolenoid;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
 import org.usfirst.frc.team619.hardware.Talon;
 import org.usfirst.frc.team619.logic.ThreadManager;
-import org.usfirst.frc.team619.logic.mapping.GenghisMappingThread;
+import org.usfirst.frc.team619.logic.mapping.RobotMappingThread;
 import org.usfirst.frc.team619.logic.mapping.ShooterMappingThread;
 import org.usfirst.frc.team619.logic.mapping.VisionThread;
 import org.usfirst.frc.team619.subsystems.DriverStation;
-import org.usfirst.frc.team619.subsystems.GenghisShooter;
+import org.usfirst.frc.team619.subsystems.RobotShooter;
 import org.usfirst.frc.team619.subsystems.Vision;
-import org.usfirst.frc.team619.subsystems.drive.GenghisDriveBase;
+import org.usfirst.frc.team619.subsystems.drive.RobotDriveBase;
 import org.usfirst.frc.team619.subsystems.sensor.SensorBase;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Genghis extends IterativeRobot {
+public class Robot2016 extends IterativeRobot {
     
 	//declare all variables and objects here
 	
@@ -42,13 +42,13 @@ public class Genghis extends IterativeRobot {
 	
 	//Logic
 	VisionThread visionThread;
-	GenghisMappingThread driveThread;
+	RobotMappingThread driveThread;
 	ShooterMappingThread shooterThread;
 	
 	//Subsystems
 	SensorBase sensorBase;
-	GenghisDriveBase driveBase;
-	GenghisShooter genghisShooter;
+	RobotDriveBase driveBase;
+	RobotShooter robotShooter;
 	Vision vision;
 	
 	//Hardware
@@ -130,8 +130,8 @@ public class Genghis extends IterativeRobot {
         rotate = new CANTalon(9);
         
         //subsystems
-        driveBase = new GenghisDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);
-        genghisShooter = new GenghisShooter(dinkArm, dankArm, flyMotor, flyMotor2, kicker, //FlyWheel
+        driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);
+        robotShooter = new RobotShooter(dinkArm, dankArm, flyMotor, flyMotor2, kicker, //FlyWheel
         		rotate, dankLimit, dinkLimit, kickLimit);
         //ghengisShooter = new GhengisShooter(dinkArm, dankArm, liftMotor, liftMotor2, intake, //Linear Punch
         //		release, switchMode, frontLimit, backLimit, winchLimit);
@@ -153,8 +153,8 @@ public class Genghis extends IterativeRobot {
     public void teleopInit(){
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
     	
-    	driveThread = new GenghisMappingThread(vision, driveBase, driverStation, 15, threadManager);
-    	shooterThread = new ShooterMappingThread(vision, genghisShooter, driverStation, 15, threadManager);
+    	driveThread = new RobotMappingThread(vision, driveBase, driverStation, 15, threadManager);
+    	shooterThread = new ShooterMappingThread(vision, robotShooter, driverStation, 15, threadManager);
     	visionThread = new VisionThread(sensorBase, vision, 15, threadManager);
     	
     	//sensorBase.startCamera("cam0");
