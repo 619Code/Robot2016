@@ -1,7 +1,6 @@
 package org.usfirst.frc.team619.robot;
 
 import org.usfirst.frc.team619.hardware.CANTalon;
-import org.usfirst.frc.team619.hardware.DualInputSolenoid;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
 import org.usfirst.frc.team619.logic.ThreadManager;
 import org.usfirst.frc.team619.logic.mapping.RobotMappingThread;
@@ -15,7 +14,6 @@ import org.usfirst.frc.team619.subsystems.sensor.SensorBase;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -171,10 +169,6 @@ public class Robot2016 extends IterativeRobot {
      * In general you shouldn't use this
      */
     public void autonomousPeriodic() {
-    	driveBase.setLeftWheels(1);
-    	driveBase.setRightWheels(1);
-    		Timer.delay(5);
-    	driveBase.stop();
 
     }
     /**

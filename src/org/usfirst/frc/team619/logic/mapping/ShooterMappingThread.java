@@ -16,8 +16,6 @@ public class ShooterMappingThread extends RobotThread {
 	protected Vision vision;
 	
 	private double time;
-	private double time2;
-	private double kickDelay;
 	private double scalePercent;
 	private boolean isHue = true;
 	private boolean isSat = false;
@@ -25,8 +23,7 @@ public class ShooterMappingThread extends RobotThread {
 	private boolean released = true;
 	private boolean released1 = true;
 	private boolean releasedSpeed = true;
-	private boolean calibrate = false;
-	private boolean firstPass = true;
+	private boolean kick = false;
 	
 	public ShooterMappingThread(Vision vision, RobotShooter robotShooter, DriverStation driverStation, int period, ThreadManager threadManager) {
 		super(period, threadManager);
@@ -37,7 +34,7 @@ public class ShooterMappingThread extends RobotThread {
 	}
 
 	protected void cycle() { //Should generally use shooter controller
-		time2 = System.currentTimeMillis();
+		time = System.currentTimeMillis();
 		
 		//Set LP scale percent
 		switch(driverStation.getLeftJoystick().getPOV()) {
@@ -97,14 +94,17 @@ public class ShooterMappingThread extends RobotThread {
 			robotShooter.setFlyWheel(0);
 		}
 		
-		/*
+		
 		//Kick the boulder
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON6)) {
-			if(firstPass) {
-				time = System.currentTimeMillis();
-			}
-		}*/
+			kick = true;
+		}
+		if(kick) { //Kick and reset after button press
+			kick = robotShooter.shoot(time);
+		}
+		SmartDashboard.putNumber("Kick delay", robotShooter.getKickDelay());
 		
+		/*
 		//Kick the boulder into flywheels
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON5)) {
 			robotShooter.kick();
@@ -112,7 +112,7 @@ public class ShooterMappingThread extends RobotThread {
 			robotShooter.resetKick();
 		}else {
 			robotShooter.stopKick();
-		}
+		}*/
 		
 		//rotate manipulator
 		robotShooter.setRotate(rotatePercent);

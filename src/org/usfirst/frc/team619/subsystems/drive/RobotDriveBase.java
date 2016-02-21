@@ -62,9 +62,9 @@ public class RobotDriveBase {
 		double aimSpeed = 0;
 		
 		if(center > 325) {
-			aimSpeed = 0.4;
+			aimSpeed = 0.5;
 		}else if(center < 315) {
-			aimSpeed = -0.4;
+			aimSpeed = -0.5;
 		}
 		setLeftWheels(-aimSpeed);
 		setRightWheels(aimSpeed);

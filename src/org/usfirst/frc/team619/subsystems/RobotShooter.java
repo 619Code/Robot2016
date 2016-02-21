@@ -3,7 +3,6 @@ package org.usfirst.frc.team619.subsystems;
 import org.usfirst.frc.team619.hardware.CANTalon;
 import org.usfirst.frc.team619.hardware.DualInputSolenoid;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
-import org.usfirst.frc.team619.hardware.Talon;
 
 public class RobotShooter {
 	
@@ -15,6 +14,10 @@ public class RobotShooter {
 	protected LimitSwitch dankLimit, dinkLimit, kickLimit;
 	
 	private boolean isWinch;
+	private boolean firstPass = true;
+	private boolean firstPass2 = true;
+	private double kickDelay;
+	private double time2;
 	
 	public RobotShooter(int dinkArmID, int dankArmID) {
 		dinkArm = new CANTalon(dinkArmID);
@@ -116,6 +119,33 @@ public class RobotShooter {
 	
 	public void resetKick() {
 		kicker.set(1);
+	}
+	
+	public boolean shoot(double time) {
+		if(firstPass) {
+			time2 = System.currentTimeMillis();
+			firstPass = false;
+		}
+		if(isKickLimit()) { //Kick boulder into flywheels
+			kick();
+		}else if (firstPass2) {
+			kickDelay = time - time2;
+			time = System.currentTimeMillis();
+			firstPass2 = false;
+		}
+		if(time - time2 < kickDelay && !firstPass2) { //Reset lever to original pos
+			resetKick();
+		}else {
+			stopKick();
+			firstPass = true;
+			firstPass2 = true;
+			return false;
+		}
+		return true;
+	}
+	
+	public double getKickDelay() {
+		return kickDelay;
 	}
 	
 	public void stopKick() {
