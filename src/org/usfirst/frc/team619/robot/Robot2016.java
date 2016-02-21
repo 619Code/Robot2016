@@ -23,7 +23,11 @@ import org.usfirst.frc.team619.subsystems.drive.RobotDriveBase;
 import org.usfirst.frc.team619.subsystems.sensor.SensorBase;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+=======
+import edu.wpi.first.wpilibj.Timer;
+>>>>>>> origin/master
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -56,8 +60,12 @@ public class Robot2016 extends IterativeRobot {
 	CANTalon rightMotor;
 	CANTalon leftMotor2;
 	CANTalon rightMotor2;
+<<<<<<< HEAD
 	CANTalon dinkArm;
 	CANTalon dankArm;
+=======
+	CANTalon shoot;
+>>>>>>> origin/master
 	
 	LimitSwitch dankLimit;
 	LimitSwitch dinkLimit;
@@ -117,6 +125,7 @@ public class Robot2016 extends IterativeRobot {
         //plug into pneumatics module
         
         //CAN
+<<<<<<< HEAD
         leftMotor = new CANTalon(2);
         leftMotor2 = new CANTalon(3);
         rightMotor = new CANTalon(0);
@@ -139,6 +148,17 @@ public class Robot2016 extends IterativeRobot {
         //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //Flywheel, no movement
         sensorBase = new SensorBase();
         vision = new Vision();
+=======
+        leftMotor = new CANTalon(1);
+        leftMotor2 = new CANTalon(2);
+        rightMotor = new CANTalon(3);
+        rightMotor2 = new CANTalon(4);
+        shoot = new CANTalon(5);
+        
+        //subsystems
+        driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2, shoot);
+        
+>>>>>>> origin/master
     }
 
     /**
@@ -178,6 +198,10 @@ public class Robot2016 extends IterativeRobot {
      * In general you shouldn't use this
      */
     public void autonomousPeriodic() {
+    	driveBase.setLeftWheels(1);
+    	driveBase.setRightWheels(1);
+    		Timer.delay(5);
+    	driveBase.stop();
 
     }
     /**
