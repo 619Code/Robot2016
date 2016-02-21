@@ -62,9 +62,9 @@ public class GhengisDriveBase {
 		double aimSpeed = 0;
 		
 		if(center > 340) {
-			aimSpeed = 0.7;
+			aimSpeed = 0.4;
 		}else if(center < 330) {
-			aimSpeed = -0.7;
+			aimSpeed = -0.4;
 		}
 		setLeftWheels(-aimSpeed);
 		setRightWheels(aimSpeed);

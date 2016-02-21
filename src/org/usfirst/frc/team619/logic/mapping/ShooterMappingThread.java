@@ -33,7 +33,7 @@ public class ShooterMappingThread extends RobotThread {
 		this.driverStation = driverStation;
 		this.ghengisShooter = ghengisShooter;
 		this.vision = vision;
-		scalePercent = 0.5;
+		scalePercent = 1.0;
 	}
 
 	protected void cycle() { //Should generally use shooter controller
@@ -44,7 +44,8 @@ public class ShooterMappingThread extends RobotThread {
 		case 45:
 		case 315:
 		case 0:
-			if(releasedSpeed && scalePercent < 1.0 && !driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON7) && !driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON8)) {
+			if(releasedSpeed && scalePercent < 1.0 && !driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON7) 
+					&& !driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON8)) {
 				scalePercent += 0.1;
 			}
 			releasedSpeed = false;
@@ -64,13 +65,27 @@ public class ShooterMappingThread extends RobotThread {
 			break;
 		}
 		double liftPercent = driverStation.getLeftJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * scalePercent;
-		double rotatePercent  = driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * (-0.75);
-		SmartDashboard.putNumber("Rotate Scale Percent", scalePercent);
+		double rotatePercent  = driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * (-0.5);
+		SmartDashboard.putNumber("Arm Scale Percent", scalePercent);
 		
-		if(!ghengisShooter.isDankLimit() && !ghengisShooter.isDinkLimit()) {
-			ghengisShooter.setArms(liftPercent);
-		}else if (liftPercent > 0) {
-			ghengisShooter.setArms(liftPercent);
+		//Dink and Dank arms + limits
+		if(ghengisShooter.isDankLimit()) {
+			if(liftPercent < 0) {
+				ghengisShooter.getDankArm().set(0);
+			}else {
+				ghengisShooter.getDankArm().set(liftPercent);
+			}
+		}else {
+			ghengisShooter.getDankArm().set(liftPercent);
+		}
+		if(ghengisShooter.isDinkLimit()) {
+			if(liftPercent < 0) {
+				ghengisShooter.getDinkArm().set(0);
+			}else {
+				ghengisShooter.getDinkArm().set(-liftPercent);
+			}
+		}else {
+			ghengisShooter.getDinkArm().set(-liftPercent);
 		}
 		
 		//Intake
@@ -90,7 +105,7 @@ public class ShooterMappingThread extends RobotThread {
 			}
 		}*/
 		
-		
+		//Kick the boulder into flywheels
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON5)) {
 			ghengisShooter.kick();
 		}else if (driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON6)) {
@@ -98,6 +113,7 @@ public class ShooterMappingThread extends RobotThread {
 		}else {
 			ghengisShooter.stopKick();
 		}
+		
 		//rotate manipulator
 		ghengisShooter.setRotate(rotatePercent);
 		

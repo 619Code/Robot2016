@@ -9,8 +9,7 @@ public class GhengisShooter {
 	
 	protected CANTalon dinkArm, dankArm;
 	protected CANTalon liftMotor, liftMotor2, intake;
-	protected CANTalon flyMotor, flyMotor2, kicker;
-	protected Talon rotate;
+	protected CANTalon flyMotor, flyMotor2, kicker, rotate;
 	protected DualInputSolenoid release, modeSwitch;
 	protected LimitSwitch frontLimit, backLimit, winchLimit;
 	protected LimitSwitch dankLimit, dinkLimit, kickLimit;
@@ -34,14 +33,14 @@ public class GhengisShooter {
 		flyMotor = new CANTalon(flyMotorID);
 		flyMotor2 = new CANTalon(flyMotorID2);
 		kicker = new CANTalon(kickerID);
-		rotate = new Talon(rotateID);
+		rotate = new CANTalon(rotateID);
 		dankLimit = new LimitSwitch(dankLimitID);
 		dinkLimit = new LimitSwitch(dinkLimitID);
 		kickLimit = new LimitSwitch(kickLimitID);
 	}
 	
 	public GhengisShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon flyMotor, CANTalon flyMotor2, 
-			CANTalon kicker, Talon rotate, LimitSwitch dankLimit, LimitSwitch dinkLimit, LimitSwitch kickLimit) {
+			CANTalon kicker, CANTalon rotate, LimitSwitch dankLimit, LimitSwitch dinkLimit, LimitSwitch kickLimit) {
 		this.dinkArm = dinkArm;
 		this.dankArm = dankArm;
 		this.flyMotor = flyMotor;
@@ -98,7 +97,7 @@ public class GhengisShooter {
 		return flyMotor;
 	}
 	
-	public Talon getRotate() {
+	public CANTalon getRotate() {
 		return rotate;
 	}
 	

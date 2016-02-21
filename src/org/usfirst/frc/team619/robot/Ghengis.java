@@ -79,7 +79,7 @@ public class Ghengis extends IterativeRobot {
 	CANTalon flyMotor;
 	CANTalon flyMotor2;
 	CANTalon kicker;
-	Talon rotate;
+	CANTalon rotate;
 	LimitSwitch kickLimit;
 
 	//Control	
@@ -104,7 +104,6 @@ public class Ghengis extends IterativeRobot {
         driverStation = new DriverStation(1, 2);
         
         //plug into pwm section on RoboRio
-        rotate  = new Talon(0);
         
         //plug into DIO on RoboRio
         dankLimit = new LimitSwitch(1);
@@ -128,6 +127,7 @@ public class Ghengis extends IterativeRobot {
         flyMotor = new CANTalon(6);
         flyMotor2 = new CANTalon(7);
         kicker = new CANTalon(8);
+        rotate = new CANTalon(9);
         
         //subsystems
         driveBase = new GhengisDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);

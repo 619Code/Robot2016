@@ -26,7 +26,7 @@ public class GhengisMappingThread extends RobotThread {
 		this.vision = vision;
 		this.driverStation = driverStation;
 		this.driveBase = driveBase;
-		leftScalePercent = 0.5;
+		leftScalePercent = 1.0;
 	}
 	
 	protected void cycle() { //Should generally use driver controller
