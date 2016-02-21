@@ -4,6 +4,11 @@ import org.usfirst.frc.team619.hardware.CANTalon;
 
 public class RobotDriveBase {
 	
+<<<<<<< HEAD:src/org/usfirst/frc/team619/subsystems/drive/GenghisDriveBase.java
+	protected CANTalon leftMotor, rightMotor, leftMotor2, rightMotor2;
+	
+	public GenghisDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2) {
+=======
 <<<<<<< HEAD
 	protected CANTalon leftMotor, rightMotor, leftMotor2, rightMotor2;
 =======
@@ -13,19 +18,22 @@ public class RobotDriveBase {
 >>>>>>> origin/master
 	
 	public RobotDriveBase(int leftMotorID, int rightMotorID, int leftMotorID2, int rightMotorID2, int shootID) {
+>>>>>>> origin/master:src/org/usfirst/frc/team619/subsystems/drive/RobotDriveBase.java
 		leftMotor = new CANTalon(leftMotorID);
 		rightMotor = new CANTalon(rightMotorID);
 		leftMotor2 = new CANTalon(leftMotorID2);
 		rightMotor2 = new CANTalon(rightMotorID2);
-		shoot = new CANTalon(shootID);
 	}
 	
+<<<<<<< HEAD:src/org/usfirst/frc/team619/subsystems/drive/GenghisDriveBase.java
+	public GenghisDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2) {
+=======
 	public RobotDriveBase(CANTalon leftMotor, CANTalon rightMotor, CANTalon leftMotor2, CANTalon rightMotor2, CANTalon shoot) {
+>>>>>>> origin/master:src/org/usfirst/frc/team619/subsystems/drive/RobotDriveBase.java
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.leftMotor2 = leftMotor2;
 		this.rightMotor2 = rightMotor2;
-		this.shoot = shoot;
 	}
 	
 	public CANTalon getLeftWheel() {
@@ -42,10 +50,6 @@ public class RobotDriveBase {
 	
 	public CANTalon getRightWheel2() {
 		return rightMotor2;
-	}
-	
-	public CANTalon shoot() {
-		return shoot;
 	}
 	
 	public void setLeftWheels(double leftPercent) {
@@ -65,7 +69,10 @@ public class RobotDriveBase {
 		rightMotor2.set(0);
 	}
 	
+<<<<<<< HEAD:src/org/usfirst/frc/team619/subsystems/drive/GenghisDriveBase.java
+=======
 <<<<<<< HEAD
+>>>>>>> origin/master:src/org/usfirst/frc/team619/subsystems/drive/RobotDriveBase.java
 	public void turn(double percent) { //positive is right
 		this.setLeftWheels(percent);
 		this.setRightWheels(percent);
@@ -82,6 +89,8 @@ public class RobotDriveBase {
 		setLeftWheels(-aimSpeed);
 		setRightWheels(aimSpeed);
 	}
+<<<<<<< HEAD:src/org/usfirst/frc/team619/subsystems/drive/GenghisDriveBase.java
+=======
 =======
 	public void turnRight(double center) {
 		leftMotor.set(-1);
@@ -117,4 +126,5 @@ public class RobotDriveBase {
 	}
 	
 >>>>>>> origin/master
+>>>>>>> origin/master:src/org/usfirst/frc/team619/subsystems/drive/RobotDriveBase.java
 }
