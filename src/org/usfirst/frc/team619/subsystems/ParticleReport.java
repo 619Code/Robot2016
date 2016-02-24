@@ -9,6 +9,7 @@ public class ParticleReport implements Comparator<ParticleReport>, Comparable<Pa
 	double BoundingRectTop;
 	double BoundingRectRight;
 	double BoundingRectBottom;
+	double Width;
 			
 	public int compareTo(ParticleReport r) {
 		return (int)(r.Area - this.Area);
@@ -26,43 +27,42 @@ public class ParticleReport implements Comparator<ParticleReport>, Comparable<Pa
 		PercentAreaToImageArea = percent;
 	}
 	
-	public double getArea() {
-		return Area;
-	}
-	
 	public void setArea(double area) {
 		Area = area;
 	}
-	
-	public double getLeftBounds() {
-		return BoundingRectLeft;
-	}
-	
 	public void setLeftBounds(double leftBounds) {
 		BoundingRectLeft = leftBounds;
 	}
 	
-	public double getRightBounds() {
-		return BoundingRectRight;
-	}
-	
-	public void setRightBounds(double width) {
-		BoundingRectRight = getLeftBounds() + width;
-	}
-	
-	public double getTopBounds() {
-		return BoundingRectTop;
+	public void setRightBounds(double rightBounds) {
+		BoundingRectRight = rightBounds;
 	}
 	
 	public void setTopBounds(double topBounds) {
 		BoundingRectTop = topBounds;
 	}
 	
-	public double getBottomBounds() {
-		return BoundingRectBottom;
+	public void setBottomBounds(double bottomBounds) {
+		BoundingRectBottom = bottomBounds;
 	}
 	
-	public void setBottomBounds(double height) {
-		BoundingRectBottom = getTopBounds() - height;
+	public double getArea() {
+		return Area;
+	}
+	
+	public double getLeftBounds() {
+		return BoundingRectLeft;
+	}
+	
+	public double getRightBounds() {
+		return BoundingRectRight;
+	}
+	
+	public double getTopBounds() {
+		return BoundingRectTop;
+	}
+	
+	public double getBottomBounds() {
+		return BoundingRectBottom;
 	}
 }

@@ -18,11 +18,11 @@ public class Vision {
 	private int sHigh;
 	private int vLow;
 	private int vHigh;
-	private double distanceInches;
-	private double totalHeight;
-	public final int castleHeight = 81;
-	public final int cameraHeight = 11; // Camera hight from the ground in inches
-	public final double targetWidth = 25.5;
+	public final int castleHeight = 83;
+	public final int xOffset = 0; //Distance from camera to front of robot
+	public final int yOffset = 21; //Camera hight from the ground in inches
+	public final int viewAngle = 60; 
+	public final double targetWidth = 23.5;
 	
 	//Comparator function for sorting particles. Returns true if particle 1 is larger
 	public boolean CompareParticleSizes(ParticleReport particle1, ParticleReport particle2)
@@ -64,25 +64,23 @@ public class Vision {
 	 * @return The estimated distance to the target in feet.
 	 */
 	public double computeDistance (Image frame, ParticleReport report) {
-		double viewAngle;
 		double normalizedWidth;
 		NIVision.GetImageSizeResult size;
 
 		size = NIVision.imaqGetImageSize(frame);
 		normalizedWidth = 2*(report.BoundingRectRight - report.BoundingRectLeft)/size.width;
-		viewAngle = 90;
 
 		return targetWidth/(normalizedWidth*12*Math.tan(viewAngle*Math.PI/(180*2)));
 	}
 	
 	public double computeLinearDistance (double distance) {
-		distanceInches = distance * 12;
-		totalHeight = castleHeight - cameraHeight;
+		double distanceInches = distance * 12;
+		double totalHeight = castleHeight - yOffset;
 		
 		if(distanceInches < totalHeight) {
-			return Math.sqrt((totalHeight*totalHeight) - (distanceInches*distanceInches)) / 12;
+			return (Math.sqrt((totalHeight*totalHeight) - (distanceInches*distanceInches)) + xOffset) / 12;
 		}
-		return Math.sqrt((distanceInches*distanceInches) - (totalHeight*totalHeight)) / 12;
+		return (Math.sqrt((distanceInches*distanceInches) - (totalHeight*totalHeight)) + xOffset) / 12;
 	}
 	
 	public double center (ParticleReport report) {
