@@ -4,6 +4,7 @@ import org.usfirst.frc.team619.hardware.Joystick;
 import org.usfirst.frc.team619.logic.RobotThread;
 import org.usfirst.frc.team619.logic.ThreadManager;
 import org.usfirst.frc.team619.subsystems.DriverStation;
+import org.usfirst.frc.team619.subsystems.RobotShooter;
 import org.usfirst.frc.team619.subsystems.Vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class CalibrationThread extends RobotThread {
 	
 	protected DriverStation driverStation;
+	protected RobotShooter robotShooter;
 	protected Vision vision;
 	
 	private boolean isHue;
@@ -24,9 +26,11 @@ public class CalibrationThread extends RobotThread {
 	private String sat;
 	private String val;
 	
-	public CalibrationThread(Vision vision, DriverStation driverStation, int period, ThreadManager threadManager) {
+	public CalibrationThread(Vision vision, RobotShooter robotShooter, DriverStation driverStation, int period, ThreadManager threadManager) {
 		super(period, threadManager);
 		this.driverStation = driverStation;
+		this.robotShooter = robotShooter;
+		this.vision = vision;
 		isHue = true;
 		isSat = false;
 		isVal = false;
@@ -43,6 +47,10 @@ public class CalibrationThread extends RobotThread {
 		SmartDashboard.putString("Edit Hue?", hue);
 		SmartDashboard.putString("Edit Sat?", sat);
 		SmartDashboard.putString("Edit Value?", val);
+		
+		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON9)) {
+			robotShooter.calibrate();
+		}
 		
 		//Cycle HSV
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON10)) {

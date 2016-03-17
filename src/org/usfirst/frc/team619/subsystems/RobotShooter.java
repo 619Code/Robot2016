@@ -16,6 +16,7 @@ public class RobotShooter {
 	private int turns;
 	private double kickDelay;
 	private double time2;
+	private int zero = 0;
 	
 	public RobotShooter(int dinkArmID, int dankArmID) {
 		dinkArm = new CANTalon(dinkArmID);
@@ -155,14 +156,17 @@ public class RobotShooter {
 	public boolean isKickLimit() {
 		return kickLimit.get();
 	}
+	
+	public void calibrate() {
+		zero = rotate.getEncPosition() * 360 / 512;
+	}
 	/**
 	 *  Gets current angle in degrees using 4x Encoder
 	 * @return Return angle
 	 */
 	public double getAngle() {
 		double angle = rotate.getEncPosition() * 360 / 512;
-		//angle -= 352;
-		angle -= 38;
+		angle -= zero;
 		turns = 1;
 		while(angle >= 360) {
 			angle -= 360;

@@ -155,7 +155,6 @@ public class Robot2016 extends IterativeRobot {
         //rotate.setReverseSoftLimit(robotShooter.setLimit(-15));
         sensorBase = new SensorBase();
         vision = new Vision();
-        
         sensorBase.startVisionCamera();
     }
 
@@ -183,7 +182,9 @@ public class Robot2016 extends IterativeRobot {
     	driveThread = new RobotMappingThread(vision, driveBase, driverStation, 0, threadManager);
     	shooterThread = new ShooterMappingThread(vision, robotShooter, driverStation, 0, threadManager);
     	visionThread = new VisionThread(sensorBase, vision, 0, threadManager);
+    	calibration = new CalibrationThread(vision, robotShooter, driverStation, 0, threadManager);
     	
+    	calibration.start();
     	driveThread.start();
     	shooterThread.start();
     	visionThread.start();

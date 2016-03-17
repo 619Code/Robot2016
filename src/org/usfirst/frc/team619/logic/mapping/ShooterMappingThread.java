@@ -92,9 +92,8 @@ public class ShooterMappingThread extends RobotThread {
 			robotShooter.setAngle(angle);
 			SmartDashboard.putNumber("Angle", angle);
 		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON3)){
-			if(robotShooter.getAngle() < 90) {
-				robotShooter.setAngle(90);
-			}
+			robotShooter.setAngle(90);
+			SmartDashboard.putNumber("Angle", 90);
 		}else {
 			robotShooter.setRotate(rotatePercent);
 			SmartDashboard.putNumber("Angle", robotShooter.getAngle());
