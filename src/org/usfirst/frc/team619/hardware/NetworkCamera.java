@@ -4,16 +4,18 @@ import edu.wpi.first.wpilibj.image.HSLImage;
 import edu.wpi.first.wpilibj.image.MonoImage;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
+import edu.wpi.first.wpilibj.vision.AxisCamera.Rotation;
 import edu.wpi.first.wpilibj.vision.AxisCamera.WhiteBalance;
 
 public class NetworkCamera {
 
 	private AxisCamera camera;
 	
-	private String cameraHost = "10.6.19.3";
+	private String cameraHost = "10.6.19.22";
 	
 	public NetworkCamera(){
 		camera = new AxisCamera(cameraHost);
+		camera.writeRotation(Rotation.k180);
 	}
 	
 	public int getColorLevel(){

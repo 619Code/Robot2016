@@ -1,21 +1,19 @@
 package org.usfirst.frc.team619.subsystems;
 
 import org.usfirst.frc.team619.hardware.CANTalon;
-import org.usfirst.frc.team619.hardware.DualInputSolenoid;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
+
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 
 public class RobotShooter {
 	
 	protected CANTalon dinkArm, dankArm;
-	protected CANTalon liftMotor, liftMotor2, intake;
 	protected CANTalon flyMotor, flyMotor2, kicker, rotate;
-	protected DualInputSolenoid release, modeSwitch;
-	protected LimitSwitch frontLimit, backLimit, winchLimit;
 	protected LimitSwitch dankLimit, dinkLimit, kickLimit;
 	
-	private boolean isWinch;
 	private boolean firstPass = true;
 	private boolean firstPass2 = true;
+	private int turns;
 	private double kickDelay;
 	private double time2;
 	
@@ -29,8 +27,8 @@ public class RobotShooter {
 		this.dankArm = dankArm;
 	}
 	
-	public RobotShooter(int dinkArmID, int dankArmID, int flyMotorID, int flyMotorID2, 
-			int kickerID, int rotateID, int dankLimitID, int dinkLimitID, int kickLimitID) {
+	public RobotShooter(int dinkArmID, int dankArmID, int flyMotorID, int flyMotorID2, int kickerID, 
+			int rotateID, int dankLimitID, int dinkLimitID, int kickLimitID) {
 		dinkArm = new CANTalon(dinkArmID);
 		dankArm = new CANTalon(dankArmID);
 		flyMotor = new CANTalon(flyMotorID);
@@ -42,45 +40,18 @@ public class RobotShooter {
 		kickLimit = new LimitSwitch(kickLimitID);
 	}
 	
-	public RobotShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon flyMotor, CANTalon flyMotor2, 
-			CANTalon kicker, CANTalon rotate, LimitSwitch dankLimit, LimitSwitch dinkLimit, LimitSwitch kickLimit) {
+	public RobotShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon flyMotor, CANTalon flyMotor2, CANTalon kicker, 
+			CANTalon rotate, LimitSwitch dankLimit, LimitSwitch dinkLimit, LimitSwitch kickLimit) {
 		this.dinkArm = dinkArm;
 		this.dankArm = dankArm;
 		this.flyMotor = flyMotor;
 		this.flyMotor2 = flyMotor2;
 		this.kicker = kicker;
 		this.rotate = rotate;
+		this.rotate.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		this.dankLimit = dankLimit;
 		this.dinkLimit = dinkLimit;
 		this.kickLimit = kickLimit;
-	}
-	
-	public RobotShooter(int dinkArmID, int dankArmID, int liftMotorID, int liftMotorID2, int intakeID, 
-			int solenoidID, int solenoidID2, int solenoidID3, int solenoidID4, int frontLimitID, int backLimitID, int winchLimitID) {
-		dinkArm = new CANTalon(dinkArmID);
-		dankArm = new CANTalon(dankArmID);
-		liftMotor = new CANTalon(liftMotorID);
-		liftMotor2 = new CANTalon(liftMotorID2);
-		intake = new CANTalon(intakeID);
-		release = new DualInputSolenoid(solenoidID, solenoidID2);
-		modeSwitch = new DualInputSolenoid(solenoidID3, solenoidID4);
-		frontLimit = new LimitSwitch(frontLimitID);
-		backLimit = new LimitSwitch(backLimitID);
-		winchLimit = new LimitSwitch(winchLimitID);
-	}
-	
-	public RobotShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon liftMotor, CANTalon liftMotor2, CANTalon intake, 
-			DualInputSolenoid release, DualInputSolenoid modeSwitch, LimitSwitch frontLimit, LimitSwitch backLimit, LimitSwitch winchLimit) {
-		this.dinkArm = dinkArm;
-		this.dankArm = dankArm;
-		this.liftMotor = liftMotor;
-		this.liftMotor2 = liftMotor2;
-		this.intake = intake;
-		this.release = release;
-		this.modeSwitch = modeSwitch;
-		this.frontLimit = frontLimit;
-		this.backLimit = backLimit;
-		this.winchLimit = winchLimit;
 	}
 	
 	public CANTalon getDinkArm() {
@@ -91,11 +62,6 @@ public class RobotShooter {
 		return dankArm;
 	}
 	
-	//FlyWheel
-	public CANTalon getLiftMotor() {
-		return liftMotor;
-	}
-	
 	public CANTalon getFlyWheel() {
 		return flyMotor;
 	}
@@ -104,6 +70,25 @@ public class RobotShooter {
 		return rotate;
 	}
 	
+	public CANTalon getKicker() {
+		return kicker;
+	}
+	
+	public void setDinkArm(double speed) {
+		if(dinkLimit.get() && speed > 0) {
+			dinkArm.set(0);
+		}else {
+			dinkArm.set(-speed);
+		}
+	}
+	
+	public void setDankArm(double speed) {
+		if(dankLimit.get() && speed > 0) {
+			dankArm.set(0);
+		}else {
+			dankArm.set(speed);
+		}
+	}
 	public void setFlyWheel(double percent) {
 		flyMotor.set(percent);
 		flyMotor2.set(-percent);
@@ -114,28 +99,35 @@ public class RobotShooter {
 	}
 	
 	public void kick() {
-		kicker.set(-1);
-	}
-	
-	public void resetKick() {
 		kicker.set(1);
 	}
 	
-	public boolean shoot(double time) {
+	public void resetKick() {
+		kicker.set(-0.5);
+	}
+	
+	/**
+	 * Kicks boulder then resets to original position
+	 *  **Must be put in a loop or kicker will malfunction**
+	 *  
+	 * @return Return true if kicking, false if fully reset
+	 */
+	public boolean shoot() {
+		double time = System.currentTimeMillis();
 		if(firstPass) {
 			time2 = System.currentTimeMillis();
 			firstPass = false;
 		}
-		if(isKickLimit()) { //Kick boulder into flywheels
+		if(!isKickLimit() && firstPass2) { //Kick
 			kick();
-		}else if (firstPass2) {
-			kickDelay = time - time2;
-			time = System.currentTimeMillis();
+		}else if(firstPass2) {
+			kickDelay = (time - time2) * 2;
+			time2 = System.currentTimeMillis();
 			firstPass2 = false;
 		}
-		if(time - time2 < kickDelay && !firstPass2) { //Reset lever to original pos
+		if(time - time2 <= kickDelay && !firstPass2) { //Reset
 			resetKick();
-		}else {
+		}else if(!firstPass2) {
 			stopKick();
 			firstPass = true;
 			firstPass2 = true;
@@ -163,69 +155,60 @@ public class RobotShooter {
 	public boolean isKickLimit() {
 		return kickLimit.get();
 	}
-	
-	//Linear Punch
-	public CANTalon getIntake() {
-		return intake;
+	/**
+	 *  Gets current angle in degrees using 4x Encoder
+	 * @return Return angle
+	 */
+	public double getAngle() {
+		double angle = rotate.getEncPosition() * 360 / 512;
+		//angle -= 352;
+		angle -= 38;
+		turns = 1;
+		while(angle >= 360) {
+			angle -= 360;
+			turns++;
+		}
+		while(angle <= 0) {
+			angle += 360;
+			turns--;
+		}
+		return angle;
 	}
 	
-	public DualInputSolenoid getRelease() {
-		return release;
+	/**
+	 * Sets the shooter to specified angle
+	 * **Must be in loop or shooter will not stop moving**
+	 * 
+	 * @param angle
+	 * @return Returns true if still aiming, false if at target
+	 */
+	public boolean setAngle(double angle) {
+		double currentAngle = getAngle();
+		angle = (int)angle;
+		
+		if(currentAngle > angle + 2) {
+			setRotate(0.5);
+		}else if(currentAngle < angle - 2) {
+			setRotate(-0.5);
+		}else {
+			setRotate(0);
+			return false;
+		}
+		return true;
 	}
 	
-	public DualInputSolenoid getSwitch() {
-		return modeSwitch;
-	}
-	
-	public boolean getFrontLimit() {
-		return frontLimit.get();
-	}
-	
-	public boolean getBackLimit() {
-		return backLimit.get();
-	}
-	
-	public boolean getWinchLimit() {
-		return winchLimit.get();
-	}
-	
-	public void switchToLift() {
-		isWinch = false;
-		modeSwitch.set(true);
-	}
-	
-	public void switchToWinch() {
-		isWinch = true;
-		modeSwitch.set(false); 
-	}
-	
-	public boolean isWinch() {
-		return isWinch;
-	}
-	
-	public void setArms(double percent) {
-		dinkArm.set(percent);
-		dankArm.set(-percent);
-	}
-	
-	public void setLift(double percent) {
-		liftMotor.set(percent);
-		liftMotor2.set(-percent);
-	}
-	
-	public void setIntake() {
-		intake.set(1);
-	}
-	
-	public void setOuttake() {
-		intake.set(-1);
-	}
-	
-	public void stopIntake() {
-		intake.set(0);
-	}
-	
-	public void fire() {
-		//enable firing mechanism
+	/**
+	 * Put this in the parameters for TalonSRX soft limits
+	 * 
+	 * @param maxAngle Desired max/min in degrees
+	 * @return maxAngle Angle normalized to 0* and in Encoder degrees
+	 */
+	public double setLimit(double maxAngle) {
+		double limit, newMax;
+		
+		//0 degrees = -11 on encoder
+		newMax = maxAngle * 512 / 360;
+		limit = newMax - 11;
+		return limit;
 	}
 }

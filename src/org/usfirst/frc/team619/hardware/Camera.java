@@ -1,6 +1,7 @@
 package org.usfirst.frc.team619.hardware;
 
 import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.Image;
 
 import edu.wpi.first.wpilibj.CameraServer;
 
@@ -8,22 +9,31 @@ public class Camera {
 
 	CameraServer camera;
 	
-	private int session;
-	String cameraName;
+	private int session = -1;
+	private String cameraName;
 	
 	/*this can be found by accessing the webdashboard with the camera plugged into Athena*/
 	public Camera(String cameraName){
 		this.cameraName = cameraName;
 		camera = CameraServer.getInstance();
-		camera.setQuality(50);
-		camera.startAutomaticCapture(cameraName);
+		camera.setQuality(20);
+		try {
+			camera.startAutomaticCapture(cameraName);
+		}catch(Exception e) {
+			System.out.println("CAMERA NOT FOUND");
+		}
 	}
+	
 	// Use ONLY with the setImage() method!!!
 	public Camera() {
-		session = NIVision.IMAQdxOpenCamera("cam0", 
+		try {
+			session = NIVision.IMAQdxOpenCamera("cam0", 
 				NIVision.IMAQdxCameraControlMode.CameraControlModeController);
         NIVision.IMAQdxConfigureGrab(session);
         setExposure(0);
+		}catch(Exception e) {
+			System.out.println("CAMERA NOT FOUND");
+		}
 	}
 	
 	public void setExposure(int exposure) {
@@ -43,6 +53,10 @@ public class Camera {
 		NIVision.IMAQdxCloseCamera(session);
 	}
 	
+	public void putImage(Image frame) {
+		camera.setImage(frame);
+	}
+	
 	public boolean isOn(){
 		return camera.isAutoCaptureStarted();
 	}
@@ -53,14 +67,6 @@ public class Camera {
 	
 	public String getName(){
 		return cameraName;
-	}
-	
-	public CameraServer getInstance(){
-		return CameraServer.getInstance();
-	}
-	
-	public void setOn(){
-		camera.startAutomaticCapture(cameraName);
 	}
 	
 	public void setQuality(int quality){

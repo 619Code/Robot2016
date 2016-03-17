@@ -5,15 +5,11 @@ import java.util.ArrayList;
 import org.usfirst.frc.team619.hardware.AnalogAccelerometer;
 import org.usfirst.frc.team619.hardware.AnalogPotentiometer;
 import org.usfirst.frc.team619.hardware.AnalogUltrasonic;
-import org.usfirst.frc.team619.hardware.RoboRioAccelerometer;
 import org.usfirst.frc.team619.hardware.Camera;
+import org.usfirst.frc.team619.hardware.RoboRioAccelerometer;
 import org.usfirst.frc.team619.hardware.DigitalEncoder;
 import org.usfirst.frc.team619.hardware.I2CAccelerometer;
 import org.usfirst.frc.team619.hardware.NetworkCamera;
-
-import com.ni.vision.NIVision.Image;
-
-import edu.wpi.first.wpilibj.CameraServer;
 
 public class SensorBase {
 	
@@ -62,32 +58,24 @@ public class SensorBase {
 		
 	}
 	
-	public void startCamera(String cameraName){
-		camera = new Camera(cameraName);
+	public void startAutomaticCapture(String name) {
+		camera = new Camera(name);
 	}
 	
-	public void startCamera() {
+	public void startVisionCamera() {
 		camera = new Camera();
 	}
-
+	
 	public void startNetworkCamera(){
 		networkCamera = new NetworkCamera();
-	}
-	
-	public void turnOffCamera(){
-		camera = null;
 	}
 	
 	public void turnOffNetworkCamera(){
 		networkCamera = null;
 	}
 	
-	public void closeCamera() {
-		camera.closeCamera();
-	}
-	
-	public void putImage(Image frame) {
-		CameraServer.getInstance().setImage(frame);
+	public int getSession() {
+		return camera.getSession();
 	}
 	
 	public void addEncoder(DigitalEncoder sensor){
@@ -114,11 +102,7 @@ public class SensorBase {
 		this.roboRioAccelerometer = roboRioAccelerometer;
 	}
 	
-	public int getCameraSession() {
-		return camera.getSession();
-	}
-	
-	public Camera getCamera(){
+	public Camera getCamera() {
 		return camera;
 	}
 	

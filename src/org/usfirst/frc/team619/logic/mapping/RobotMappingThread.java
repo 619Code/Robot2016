@@ -17,21 +17,24 @@ public class RobotMappingThread extends RobotThread {
 	protected RobotShooter robotShooter;
 	protected Vision vision;
 	
-	private double center;
 	private double leftScalePercent;
-	private boolean releasedSpeed = true;
+	private boolean releasedSpeed;
+	private boolean releasedCam;
 	
 	public RobotMappingThread(Vision vision, RobotDriveBase driveBase, DriverStation driverStation, int period, ThreadManager threadManager) {
 		super(period, threadManager);
-		this.vision = vision;
 		this.driverStation = driverStation;
 		this.driveBase = driveBase;
-		leftScalePercent = 1.0;
+		this.vision = vision;
+		leftScalePercent = 0.5;
+		releasedSpeed = true;
 	}
 	
 	protected void cycle() { //Should generally use driver controller
 		//Change scale percent
 		switch(driverStation.getRightJoystick().getPOV()) {
+		default:
+			break;
 		case 45:
 		case 315:
 		case 0:
@@ -51,28 +54,30 @@ public class RobotMappingThread extends RobotThread {
 		case -1: 
 			releasedSpeed = true;
 			break;
-		default:
-			break;
 		}
 		
 		SmartDashboard.putNumber("Scale Percent", leftScalePercent);
-		double leftPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * leftScalePercent;
-		double rightPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * leftScalePercent;
-		center = SmartDashboard.getNumber("Center");
+		double leftPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * (leftScalePercent); //Left Wheels
+		double rightPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * (leftScalePercent); //Right Wheels
 		
-		//Print target info
-		if(center == -1) {
-			SmartDashboard.putString("WARNING", "NO TARGET FOUND");
-		}else {
-			SmartDashboard.putString("WARNING", "TARGET AT " + center);
-		}
-		
-		//Auto aiming and driving
+		//Do a 180
+//		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON3)) {
+//			double currentAngle = driveBase.getAngle();
+//			double angle = currentAngle + 170;
+//			
+//			while(currentAngle < angle) {
+//				if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON2)) break;
+//				currentAngle = driveBase.getAngle();
+//				driveBase.setLeftWheels(leftPercent);
+//				driveBase.setRightWheels(-rightPercent);
+//			}
+//			driveBase.stop();
+//		}else
 		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON1)) {
-			driveBase.aim(center);
+			driveBase.talonAim(vision.center(), leftScalePercent);
 		}else {
-			driveBase.setLeftWheels(leftPercent);
-			driveBase.setRightWheels(rightPercent);
+			driveBase.setLeftTalons(leftPercent);
+			driveBase.setRightTalons(rightPercent);
 		}
 	}
 }

@@ -12,6 +12,7 @@ import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionThread extends RobotThread {
@@ -22,11 +23,11 @@ public class VisionThread extends RobotThread {
 	private int m_id;
 	private int index;
 	private double start;
-	private double distance;
 	private double AREA_MINIMUM = 0.1; //Default Area minimum for particle as a percentage of total image area
 	private float areaMin = (float)AREA_MINIMUM;
 	private Image frame; //Unfiltered image
 	private Image binaryFrame; //filtered binary image
+	private Image displayFrame; //Filtered image, put on dashboard
 	private NIVision.Range GOAL_HUE_RANGE;	//Default hue range for yellow tote
 	private NIVision.Range GOAL_SAT_RANGE;	//Default saturation range for yellow tote
 	private NIVision.Range GOAL_VAL_RANGE;	//Default value range for yellow tote
@@ -35,18 +36,19 @@ public class VisionThread extends RobotThread {
 	
 	public VisionThread(SensorBase sensorBase, Vision vision, int period, ThreadManager threadManager) {
 		super(period, threadManager);
-		this.sensorBase = sensorBase;
 		this.vision = vision;
-		
-    	this.vision.setHSV(80, 115, 200, 255, 20, 80);
+		this.sensorBase = sensorBase;
+		this.vision.setHSV(80, 120, 220, 255, 20, 80);
+    	
+		m_id = sensorBase.getSession();
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 		binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
+		displayFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 		criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA, AREA_MINIMUM, 100.0, 0, 0);
 	}
 	
 	protected void cycle(){
 		start = System.currentTimeMillis();
-    	m_id = this.sensorBase.getCameraSession();
 		NIVision.IMAQdxGrab(m_id, frame, 1);
 		
     	GOAL_HUE_RANGE = new NIVision.Range(vision.getHueLow(), vision.getHueHigh());	//Default hue range for green LEDs on reflective tape
@@ -54,14 +56,13 @@ public class VisionThread extends RobotThread {
     	GOAL_VAL_RANGE = new NIVision.Range(vision.getValueLow(), vision.getValueHigh());	//Default value range for green LEDs
     	
 		//Threshold the image looking for green
-		NIVision.imaqColorThreshold(binaryFrame, frame, 255, NIVision.ColorMode.HSV, GOAL_HUE_RANGE, GOAL_SAT_RANGE, GOAL_VAL_RANGE); //Mandatory - Takes >100ms!!
-    	
+    	NIVision.imaqColorThreshold(binaryFrame, frame, 255, NIVision.ColorMode.HSV, GOAL_HUE_RANGE, GOAL_SAT_RANGE, GOAL_VAL_RANGE);
+    		
 		//Send particle count to dashboard
 		index = NIVision.imaqCountParticles(binaryFrame, 1);
 		SmartDashboard.putNumber("Masked particles", index);
 		
-		//Send image to dashboard
-		//sensorBase.putImage(binaryFrame); //CALLING THIS METHOD TAKES ~50ms!!!
+		//CameraServer.getInstance().setImage(binaryFrame);
 
 		//filter out small particles
 		criteria[0].lower = areaMin;
@@ -89,11 +90,11 @@ public class VisionThread extends RobotThread {
 			particles.sort(null);
 			
 			//Use elementAt(0) for largest particle
-			distance = vision.computeDistance(binaryFrame, particles.elementAt(0));
 			SmartDashboard.putNumber("Aspect", vision.AspectScore(particles.elementAt(0)));
-			SmartDashboard.putNumber("Area", vision.AreaScore(particles.elementAt(0)));
-			SmartDashboard.putNumber("Distance", distance);
-			SmartDashboard.putNumber("Linear Distance", vision.computeLinearDistance(distance));
+			SmartDashboard.putNumber("Area Score", vision.AreaScore(particles.elementAt(0)));
+			SmartDashboard.putNumber("Area", vision.getArea());
+			SmartDashboard.putNumber("Distance", vision.computeDistance(binaryFrame, particles.elementAt(0)));
+			SmartDashboard.putNumber("Linear Distance", vision.computeLinearDistance());
 			SmartDashboard.putNumber("Center", vision.center(particles.elementAt(0)));		
 		}else {
 			SmartDashboard.putNumber("Center", -1);

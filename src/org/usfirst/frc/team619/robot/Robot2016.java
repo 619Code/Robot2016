@@ -2,7 +2,11 @@ package org.usfirst.frc.team619.robot;
 
 import org.usfirst.frc.team619.hardware.CANTalon;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
+import org.usfirst.frc.team619.hardware.Talon;
 import org.usfirst.frc.team619.logic.ThreadManager;
+import org.usfirst.frc.team619.logic.actions.AutoShoot;
+import org.usfirst.frc.team619.logic.actions.AutoTest;
+import org.usfirst.frc.team619.logic.mapping.CalibrationThread;
 import org.usfirst.frc.team619.logic.mapping.RobotMappingThread;
 import org.usfirst.frc.team619.logic.mapping.ShooterMappingThread;
 import org.usfirst.frc.team619.logic.mapping.VisionThread;
@@ -12,8 +16,10 @@ import org.usfirst.frc.team619.subsystems.Vision;
 import org.usfirst.frc.team619.subsystems.drive.RobotDriveBase;
 import org.usfirst.frc.team619.subsystems.sensor.SensorBase;
 
+import com.kauailabs.nav6.frc.IMUVeryAdvanced;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.SerialPort;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,12 +40,17 @@ public class Robot2016 extends IterativeRobot {
 	VisionThread visionThread;
 	RobotMappingThread driveThread;
 	ShooterMappingThread shooterThread;
+	CalibrationThread calibration;
 	
 	//Subsystems
 	SensorBase sensorBase;
 	RobotDriveBase driveBase;
 	RobotShooter robotShooter;
 	Vision vision;
+	
+	//Autonomous
+	AutoTest auto;
+	AutoShoot autoShoot;
 	
 	//Hardware
 	CANTalon leftMotor;
@@ -53,18 +64,11 @@ public class Robot2016 extends IterativeRobot {
 	LimitSwitch dankLimit;
 	LimitSwitch dinkLimit;
 	
-	/*//For Linear Punch
-	CANTalon liftMotor;
-	CANTalon liftMotor2;
-	CANTalon intake;
-	
-	DualInputSolenoid release;
-	DualInputSolenoid switchMode;
-	
-	LimitSwitch frontLimit;
-	LimitSwitch backLimit;
-	LimitSwitch winchLimit;
-	*/
+	//Temp
+	Talon frontLeft;
+	Talon backLeft;
+	Talon frontRight;
+	Talon backRight;
 	
 	//For Flywheel
 	CANTalon flyMotor;
@@ -73,7 +77,10 @@ public class Robot2016 extends IterativeRobot {
 	CANTalon rotate;
 	LimitSwitch kickLimit;
 
-	//Control	
+	//Control
+	SerialPort port;
+	IMUVeryAdvanced imu;
+	
 	/**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -101,35 +108,55 @@ public class Robot2016 extends IterativeRobot {
         dinkLimit = new LimitSwitch(2);
         kickLimit = new LimitSwitch(0);
         
-        //plug into I2C on RoboRio
+        //plug into I2C on Robo		Rio
         
         //plug into Analog Input on RoboRio
         
         //plug into pneumatics module
         
-        //CAN
-        leftMotor = new CANTalon(2);
-        leftMotor2 = new CANTalon(3);
-        rightMotor = new CANTalon(0);
-        rightMotor2 = new CANTalon(1);
+        //serial port
+		try {
+			port = new SerialPort(57600,SerialPort.Port.kMXP);
+            imu = new IMUVeryAdvanced(port);
+		} catch(Exception ex) { }
         
-        dinkArm = new CANTalon(4);
-        dankArm = new CANTalon(5);
-        flyMotor = new CANTalon(6);
-        flyMotor2 = new CANTalon(7);
-        kicker = new CANTalon(8);
-        rotate = new CANTalon(9);
+        //CAN
+		//USE ON ACTUAL ROBOT
+//        leftMotor = new CANTalon(4);
+//        leftMotor2 = new CANTalon(5);
+//        rightMotor = new CANTalon(6);
+//        rightMotor2 = new CANTalon(7);
+//        
+//        dinkArm = new CANTalon(8);
+//        dankArm = new CANTalon(9);
+//        flyMotor = new CANTalon(2);
+//        flyMotor2 = new CANTalon(3);
+//        kicker = new CANTalon(1);
+//        rotate = new CANTalon(0);
+		
+		//Can 
+		//USE ON PRACTICE BOT
+		frontLeft = new Talon(3);
+		backLeft = new Talon(4);
+		frontRight = new Talon(1);
+		backRight = new Talon(2);
+		
+		flyMotor = new CANTalon(7);
+		flyMotor2 = new CANTalon(8);
+		kicker = new CANTalon(6);
+		rotate = new CANTalon(9);
         
         //subsystems
-        driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2);
-        robotShooter = new RobotShooter(dinkArm, dankArm, flyMotor, flyMotor2, kicker, //FlyWheel
-        		rotate, dankLimit, dinkLimit, kickLimit);
-        //ghengisShooter = new GhengisShooter(dinkArm, dankArm, liftMotor, liftMotor2, intake, //Linear Punch
-        //		release, switchMode, frontLimit, backLimit, winchLimit);
-        //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //No shooting
-        //ghengisShooter = new GhengisShooter(dinkArm, dankArm); //Flywheel, no movement
+        //driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2, imu);
+		driveBase = new RobotDriveBase(frontLeft, backLeft, frontRight, backRight);
+        robotShooter = new RobotShooter(dinkArm, dankArm, flyMotor, flyMotor2, 
+        		kicker, rotate, dankLimit, dinkLimit, kickLimit);
+        //rotate.setForwardSoftLimit(robotShooter.setLimit(90));
+        //rotate.setReverseSoftLimit(robotShooter.setLimit(-15));
         sensorBase = new SensorBase();
         vision = new Vision();
+        
+        sensorBase.startVisionCamera();
     }
 
     /**
@@ -137,6 +164,15 @@ public class Robot2016 extends IterativeRobot {
      */
     public void autonomousInit(){
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
+    	
+    	visionThread = new VisionThread(sensorBase, vision, 0, threadManager);
+    	auto = new AutoTest(driveBase, robotShooter);
+    	//autoShoot = new AutoShoot(vision, robotShooter, driveBase, 10, 15, threadManager);
+    	
+    	//visionThread.start();
+    	
+    	auto.run();
+    	//autoShoot.start();
     }
     /**
      * This function is called when teleop is initialized
@@ -144,12 +180,10 @@ public class Robot2016 extends IterativeRobot {
     public void teleopInit(){
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
     	
-    	driveThread = new RobotMappingThread(vision, driveBase, driverStation, 15, threadManager);
-    	shooterThread = new ShooterMappingThread(vision, robotShooter, driverStation, 15, threadManager);
-    	visionThread = new VisionThread(sensorBase, vision, 15, threadManager);
+    	driveThread = new RobotMappingThread(vision, driveBase, driverStation, 0, threadManager);
+    	shooterThread = new ShooterMappingThread(vision, robotShooter, driverStation, 0, threadManager);
+    	visionThread = new VisionThread(sensorBase, vision, 0, threadManager);
     	
-    	//sensorBase.startCamera("cam0");
-    	sensorBase.startCamera();
     	driveThread.start();
     	shooterThread.start();
     	visionThread.start();
@@ -157,12 +191,6 @@ public class Robot2016 extends IterativeRobot {
     
     public void teleopPeriodic() {
     	
-		SmartDashboard.putNumber("Tote hue min", vision.getHueLow());
-		SmartDashboard.putNumber("Tote hue max", vision.getHueHigh());
-		SmartDashboard.putNumber("Tote sat min", vision.getSatLow());
-		SmartDashboard.putNumber("Tote sat max", vision.getSatHigh());
-		SmartDashboard.putNumber("Tote val min", vision.getValueLow());
-		SmartDashboard.putNumber("Tote val max", vision.getValueHigh());    	
     }
     /**
      * This function is called periodically during autonomous
@@ -173,7 +201,6 @@ public class Robot2016 extends IterativeRobot {
     }
     /**
      * This function is called periodically during operator control
-     * In general you shouldn't use this
      */
     /**
      * This function is called periodically during test mode
@@ -187,10 +214,5 @@ public class Robot2016 extends IterativeRobot {
     }
     public void disabledInit(){
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
-    	
-    	// Close the camera through NIVision. This is only used for vision processing
-    	try {
-    		sensorBase.closeCamera();
-    	}catch (Exception e) {}
     }
 }
