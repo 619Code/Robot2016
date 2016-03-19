@@ -3,7 +3,6 @@ package org.usfirst.frc.team619.subsystems.drive;
 import org.usfirst.frc.team619.hardware.CANTalon;
 import org.usfirst.frc.team619.hardware.Talon;
 
-import com.kauailabs.nav6.frc.IMUAdvanced;
 import com.kauailabs.nav6.frc.IMUVeryAdvanced;
 
 public class RobotDriveBase {
@@ -104,9 +103,9 @@ public class RobotDriveBase {
 		double aimSpeed = 0;
 		
 		if(center > 325) {
-			aimSpeed = speed;
+			aimSpeed = 0.75 * speed;
 		}else if(center < 315) {
-			aimSpeed = speed;
+			aimSpeed = 0.75 * speed;
 		}
 		setLeftWheels(-aimSpeed);
 		setRightWheels(aimSpeed);

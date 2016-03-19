@@ -13,7 +13,6 @@ public class RobotShooter {
 	
 	private boolean firstPass = true;
 	private boolean firstPass2 = true;
-	private int turns;
 	private double kickDelay;
 	private double time2;
 	private int zero = 0;
@@ -100,11 +99,14 @@ public class RobotShooter {
 	}
 	
 	public void kick() {
-		kicker.set(1);
+		if(!kickLimit.get())
+			kicker.set(0.5);
+		else
+			kicker.set(0);
 	}
 	
 	public void resetKick() {
-		kicker.set(-0.5);
+		kicker.set(-0.4);
 	}
 	
 	/**
@@ -157,9 +159,17 @@ public class RobotShooter {
 		return kickLimit.get();
 	}
 	
+	/**
+	 * Sets the current position as 90 degrees.
+	 * If not called, the shooter will be assumed to be vertical.
+	 * 
+	 * Should be called in the pit or when the shooter is expected to be at
+	 * 90 degrees, such as at the beginning of a match. Use with caution.
+	 */
 	public void calibrate() {
 		zero = rotate.getEncPosition() * 360 / 512;
 	}
+	
 	/**
 	 *  Gets current angle in degrees using 4x Encoder
 	 * @return Return angle
@@ -167,15 +177,6 @@ public class RobotShooter {
 	public double getAngle() {
 		double angle = rotate.getEncPosition() * 360 / 512;
 		angle -= zero;
-		turns = 1;
-		while(angle >= 360) {
-			angle -= 360;
-			turns++;
-		}
-		while(angle <= 0) {
-			angle += 360;
-			turns--;
-		}
 		return angle;
 	}
 	
@@ -187,13 +188,16 @@ public class RobotShooter {
 	 * @return Returns true if still aiming, false if at target
 	 */
 	public boolean setAngle(double angle) {
+		double speed = 0.45;
 		double currentAngle = getAngle();
 		angle = (int)angle;
 		
-		if(currentAngle > angle + 2) {
-			setRotate(0.5);
-		}else if(currentAngle < angle - 2) {
-			setRotate(-0.5);
+		if(currentAngle > 45)
+			speed = 0.2;
+		if(currentAngle > angle + 1) {
+			setRotate(speed);
+		}else if(currentAngle < angle - 1) {
+			setRotate(-speed);
 		}else {
 			setRotate(0);
 			return false;

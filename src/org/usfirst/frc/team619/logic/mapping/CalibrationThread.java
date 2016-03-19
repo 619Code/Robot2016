@@ -48,10 +48,6 @@ public class CalibrationThread extends RobotThread {
 		SmartDashboard.putString("Edit Sat?", sat);
 		SmartDashboard.putString("Edit Value?", val);
 		
-		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON9)) {
-			robotShooter.calibrate();
-		}
-		
 		//Cycle HSV
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON10)) {
 			if(isHue && releasedHSV) {

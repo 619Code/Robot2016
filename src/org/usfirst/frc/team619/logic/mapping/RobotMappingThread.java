@@ -3,6 +3,7 @@ package org.usfirst.frc.team619.logic.mapping;
 import org.usfirst.frc.team619.hardware.Joystick;
 import org.usfirst.frc.team619.logic.RobotThread;
 import org.usfirst.frc.team619.logic.ThreadManager;
+import org.usfirst.frc.team619.subsystems.ClimberBase;
 import org.usfirst.frc.team619.subsystems.DriverStation;
 import org.usfirst.frc.team619.subsystems.RobotShooter;
 import org.usfirst.frc.team619.subsystems.Vision;
@@ -15,16 +16,18 @@ public class RobotMappingThread extends RobotThread {
 	protected DriverStation driverStation;
 	protected RobotDriveBase driveBase;
 	protected RobotShooter robotShooter;
+	protected ClimberBase climbBase;
 	protected Vision vision;
 	
 	private double leftScalePercent;
 	private boolean releasedSpeed;
 	private boolean releasedCam;
 	
-	public RobotMappingThread(Vision vision, RobotDriveBase driveBase, DriverStation driverStation, int period, ThreadManager threadManager) {
+	public RobotMappingThread(Vision vision, ClimberBase climbBase, RobotDriveBase driveBase, DriverStation driverStation, int period, ThreadManager threadManager) {
 		super(period, threadManager);
 		this.driverStation = driverStation;
 		this.driveBase = driveBase;
+		this.climbBase = climbBase;
 		this.vision = vision;
 		leftScalePercent = 0.5;
 		releasedSpeed = true;
@@ -78,6 +81,18 @@ public class RobotMappingThread extends RobotThread {
 		}else {
 			driveBase.setLeftTalons(leftPercent);
 			driveBase.setRightTalons(rightPercent);
+		}
+		
+		//Climber Solenoids
+		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON5)) {
+			climbBase.fireClimber();
+		}else {
+			climbBase.idleClimber();
+		}
+		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON6)) {
+			climbBase.moveClimber();
+		}else {
+			climbBase.stopClimber();
 		}
 	}
 }

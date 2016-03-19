@@ -2,6 +2,7 @@ package org.usfirst.frc.team619.robot;
 
 import org.usfirst.frc.team619.hardware.CANTalon;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
+import org.usfirst.frc.team619.hardware.Solenoid;
 import org.usfirst.frc.team619.hardware.Talon;
 import org.usfirst.frc.team619.logic.ThreadManager;
 import org.usfirst.frc.team619.logic.actions.AutoShoot;
@@ -10,6 +11,7 @@ import org.usfirst.frc.team619.logic.mapping.CalibrationThread;
 import org.usfirst.frc.team619.logic.mapping.RobotMappingThread;
 import org.usfirst.frc.team619.logic.mapping.ShooterMappingThread;
 import org.usfirst.frc.team619.logic.mapping.VisionThread;
+import org.usfirst.frc.team619.subsystems.ClimberBase;
 import org.usfirst.frc.team619.subsystems.DriverStation;
 import org.usfirst.frc.team619.subsystems.RobotShooter;
 import org.usfirst.frc.team619.subsystems.Vision;
@@ -46,6 +48,7 @@ public class Robot2016 extends IterativeRobot {
 	SensorBase sensorBase;
 	RobotDriveBase driveBase;
 	RobotShooter robotShooter;
+	ClimberBase climbBase;
 	Vision vision;
 	
 	//Autonomous
@@ -76,6 +79,12 @@ public class Robot2016 extends IterativeRobot {
 	CANTalon kicker;
 	CANTalon rotate;
 	LimitSwitch kickLimit;
+	
+	//Climber
+	CANTalon winchL;
+	CANTalon winchR;
+	Solenoid angleSol;
+	Solenoid climberSol;
 
 	//Control
 	SerialPort port;
@@ -113,6 +122,8 @@ public class Robot2016 extends IterativeRobot {
         //plug into Analog Input on RoboRio
         
         //plug into pneumatics module
+        angleSol = new Solenoid(0);
+        climberSol = new Solenoid(1);
         
         //serial port
 		try {
@@ -145,6 +156,9 @@ public class Robot2016 extends IterativeRobot {
 		flyMotor2 = new CANTalon(8);
 		kicker = new CANTalon(6);
 		rotate = new CANTalon(9);
+		
+		winchL = new CANTalon(10);
+		winchR = new CANTalon(11);
         
         //subsystems
         //driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2, imu);
@@ -153,6 +167,7 @@ public class Robot2016 extends IterativeRobot {
         		kicker, rotate, dankLimit, dinkLimit, kickLimit);
         //rotate.setForwardSoftLimit(robotShooter.setLimit(90));
         //rotate.setReverseSoftLimit(robotShooter.setLimit(-15));
+        climbBase = new ClimberBase(winchL, winchR, angleSol, climberSol);
         sensorBase = new SensorBase();
         vision = new Vision();
         sensorBase.startVisionCamera();
@@ -179,12 +194,12 @@ public class Robot2016 extends IterativeRobot {
     public void teleopInit(){
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
     	
-    	driveThread = new RobotMappingThread(vision, driveBase, driverStation, 0, threadManager);
+    	driveThread = new RobotMappingThread(vision, climbBase, driveBase, driverStation, 0, threadManager);
     	shooterThread = new ShooterMappingThread(vision, robotShooter, driverStation, 0, threadManager);
     	visionThread = new VisionThread(sensorBase, vision, 0, threadManager);
-    	calibration = new CalibrationThread(vision, robotShooter, driverStation, 0, threadManager);
+    	//calibration = new CalibrationThread(vision, robotShooter, driverStation, 0, threadManager);
     	
-    	calibration.start();
+    	//calibration.start();
     	driveThread.start();
     	shooterThread.start();
     	visionThread.start();

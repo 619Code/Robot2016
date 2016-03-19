@@ -69,6 +69,11 @@ public class ShooterMappingThread extends RobotThread {
 		//robotShooter.setDankArm(liftPercent);
 		//robotShooter.setDinkArm(liftPercent);
 		
+		//Sets the current angle as 90
+		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON9)) {
+			robotShooter.calibrate();
+		}
+		
 		//Intake
 		if(driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_TRIGGER) > 0) {
 			robotShooter.setFlyWheel(driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_TRIGGER));
@@ -88,7 +93,7 @@ public class ShooterMappingThread extends RobotThread {
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON2)) {
 			double distance = (vision.getLinearDistance() * 12) - vision.xOffset;
 			
-			angle = Math.atan((vision.totalHeight + 20) / distance) * (180 / Math.PI);
+			angle = Math.atan((vision.totalHeight + vision.getCompensation()) / distance) * (180 / Math.PI);
 			robotShooter.setAngle(angle);
 			SmartDashboard.putNumber("Angle", angle);
 		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON3)){
@@ -98,6 +103,7 @@ public class ShooterMappingThread extends RobotThread {
 			robotShooter.setRotate(rotatePercent);
 			SmartDashboard.putNumber("Angle", robotShooter.getAngle());
 		}
+		SmartDashboard.putBoolean("On?", robotShooter.isKickLimit());
 //		//Manual reset of kicker - hold LB and press shoot to move
 //		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON5)) {
 //			aim = false;

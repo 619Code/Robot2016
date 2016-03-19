@@ -21,11 +21,11 @@ public class Vision {
 	private int sLow, sHigh;
 	private int vLow, vHigh;
 	public final int castleHeight = 96; //Center of goal is 8ft
-	public final int xOffset = 25; //Distance from camera to front of robot
-	public final int yOffset = 12; //Camera hight from the ground in inches
+	public final int xOffset = 30; //Distance from camera to front of robot
+	public final int yOffset = 11; //Camera hight from the ground in inches
 	public final int totalHeight = castleHeight - yOffset;
 	public final double targetWidth = 20; //Width of reflective tape
-	public final double targetHeight = 14; //Height of reflective tape
+	public final double targetHeight = 12; //Height of reflective tape
 	public final double targetRatio = targetWidth / targetHeight;
 	
 	//Comparator function for sorting particles. Returns true if particle 1 is larger
@@ -87,7 +87,7 @@ public class Vision {
 		size = NIVision.imaqGetImageSize(frame);
 		ratio = (report.BoundingRectRight - report.BoundingRectLeft) / (report.BoundingRectTop - report.BoundingRectBottom);
 		normalizedWidth = size.width / (report.BoundingRectRight - report.BoundingRectLeft);
-		targetSize = 22; //size of target
+		targetSize = 23.5; //size of target
 		distance = targetSize * normalizedWidth / 12;
 		return distance;
 	}
@@ -101,6 +101,19 @@ public class Vision {
 			linearDistance = (Math.sqrt((distanceInches*distanceInches) - (totalHeight*totalHeight))) / 12;
 		}
 		return linearDistance;
+	}
+	
+	public double getCompensation() {
+		double x = distance;
+		double total = 0;
+		
+		while(x > 9) {
+			total += 3;
+			if(distance > 13)
+				total += 1.5;
+			x -= 1;
+		}
+		return total;
 	}
 	
 	public double getDistance() {
