@@ -18,7 +18,6 @@ public class AnalogUltrasonic{
     
     private final AnalogIn analog;
     
-    private static final double PULSE_TIME_SECONDS = 0.000020;
     private static final double INCHES_PER_VOLT = 260.086013;
     private static final double CM_PER_VOLT = 102.396068;
     private static final double MM_PER_VOLT = 1023.96068;

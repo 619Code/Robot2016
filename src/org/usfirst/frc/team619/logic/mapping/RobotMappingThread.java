@@ -20,8 +20,11 @@ public class RobotMappingThread extends RobotThread {
 	protected Vision vision;
 	
 	private double leftScalePercent;
+	private double angle;
 	private boolean releasedSpeed;
-	private boolean releasedCam;
+	private boolean releasedTurn;
+	private boolean aim;
+	private boolean fired;
 	
 	public RobotMappingThread(Vision vision, ClimberBase climbBase, RobotDriveBase driveBase, DriverStation driverStation, int period, ThreadManager threadManager) {
 		super(period, threadManager);
@@ -31,12 +34,16 @@ public class RobotMappingThread extends RobotThread {
 		this.vision = vision;
 		leftScalePercent = 0.5;
 		releasedSpeed = true;
+		releasedTurn = true;
+		aim = false;
+		fired = false;
 	}
 	
 	protected void cycle() { //Should generally use driver controller
 		//Change scale percent
 		switch(driverStation.getRightJoystick().getPOV()) {
-		default:
+		case -1: 
+			releasedSpeed = true;
 			break;
 		case 45:
 		case 315:
@@ -54,45 +61,62 @@ public class RobotMappingThread extends RobotThread {
 			}
 			releasedSpeed = false;
 			break;
-		case -1: 
-			releasedSpeed = true;
+		default:
 			break;
 		}
 		
 		SmartDashboard.putNumber("Scale Percent", leftScalePercent);
 		double leftPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * (leftScalePercent); //Left Wheels
 		double rightPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * (leftScalePercent); //Right Wheels
+		double leftWinch = driverStation.getRightJoystick().getAxis(Joystick.Axis.LEFT_TRIGGER);
+		double rightWinch = driverStation.getRightJoystick().getAxis(Joystick.Axis.RIGHT_TRIGGER);
 		
 		//Do a 180
-//		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON3)) {
-//			double currentAngle = driveBase.getAngle();
-//			double angle = currentAngle + 170;
-//			
-//			while(currentAngle < angle) {
-//				if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON2)) break;
-//				currentAngle = driveBase.getAngle();
-//				driveBase.setLeftWheels(leftPercent);
-//				driveBase.setRightWheels(-rightPercent);
-//			}
-//			driveBase.stop();
-//		}else
-		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON1)) {
-			driveBase.talonAim(vision.center(), leftScalePercent);
+		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON3)) {
+			double currentAngle = driveBase.getAngle();
+			if(releasedTurn) {
+				angle = currentAngle + 140;
+				releasedTurn = false;
+			}
+			
+			while(currentAngle < angle) {
+				if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON2))
+					break;
+				currentAngle = driveBase.getAngle();
+				if(angle > 360)
+					if(currentAngle <= 140)
+						currentAngle += 360;
+				driveBase.setLeftWheels(-0.75);
+				driveBase.setRightWheels(0.75);
+			}
+			driveBase.setLeftWheels(1);
+			driveBase.setRightWheels(-1);
+		}else if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON1)) {
+			driveBase.aim(vision.center(), leftScalePercent);
 		}else {
-			driveBase.setLeftTalons(leftPercent);
-			driveBase.setRightTalons(rightPercent);
+			driveBase.setLeftWheels(leftPercent);
+			driveBase.setRightWheels(rightPercent);
+			releasedTurn = true;
 		}
+		if(Math.abs(vision.center() - 320) < 5)
+			aim = true;
+		else
+			aim = false;
+		SmartDashboard.putBoolean("Ready to shoot?", aim);
 		
-		//Climber Solenoids
-		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON5)) {
-			climbBase.fireClimber();
-		}else {
-			climbBase.idleClimber();
-		}
-		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON6)) {
-			climbBase.moveClimber();
-		}else {
+		//Fire pneumatics
+		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON4)) {
+			climbBase.extendClimber();
+			fired = true;
+		}else if(!fired)
+			climbBase.resetClimber();
+		else
 			climbBase.stopClimber();
-		}
+		
+		//Set winch speed
+		if(rightWinch > 0.2)
+			climbBase.setWinch(rightWinch);
+		else
+			climbBase.setWinch(0);
 	}
 }

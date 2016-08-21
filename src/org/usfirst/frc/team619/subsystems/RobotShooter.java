@@ -11,11 +11,8 @@ public class RobotShooter {
 	protected CANTalon flyMotor, flyMotor2, kicker, rotate;
 	protected LimitSwitch dankLimit, dinkLimit, kickLimit;
 	
-	private boolean firstPass = true;
-	private boolean firstPass2 = true;
-	private double kickDelay;
-	private double time2;
-	private int zero = 0;
+	private double zero = 0;
+	private double zero2 = 0;
 	
 	public RobotShooter(int dinkArmID, int dankArmID) {
 		dinkArm = new CANTalon(dinkArmID);
@@ -43,6 +40,7 @@ public class RobotShooter {
 	public RobotShooter(CANTalon dinkArm, CANTalon dankArm, CANTalon flyMotor, CANTalon flyMotor2, CANTalon kicker, 
 			CANTalon rotate, LimitSwitch dankLimit, LimitSwitch dinkLimit, LimitSwitch kickLimit) {
 		this.dinkArm = dinkArm;
+		this.dinkArm.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		this.dankArm = dankArm;
 		this.flyMotor = flyMotor;
 		this.flyMotor2 = flyMotor2;
@@ -75,19 +73,11 @@ public class RobotShooter {
 	}
 	
 	public void setDinkArm(double speed) {
-		if(dinkLimit.get() && speed > 0) {
-			dinkArm.set(0);
-		}else {
-			dinkArm.set(-speed);
-		}
+		dinkArm.set(speed);
 	}
 	
 	public void setDankArm(double speed) {
-		if(dankLimit.get() && speed > 0) {
-			dankArm.set(0);
-		}else {
-			dankArm.set(speed);
-		}
+		dankArm.set(-speed);
 	}
 	public void setFlyWheel(double percent) {
 		flyMotor.set(percent);
@@ -95,7 +85,7 @@ public class RobotShooter {
 	}
 	
 	public void setRotate(double percent) {
-		rotate.set(percent);
+		rotate.set(-percent);
 	}
 	
 	public void kick() {
@@ -106,41 +96,7 @@ public class RobotShooter {
 	}
 	
 	public void resetKick() {
-		kicker.set(-0.4);
-	}
-	
-	/**
-	 * Kicks boulder then resets to original position
-	 *  **Must be put in a loop or kicker will malfunction**
-	 *  
-	 * @return Return true if kicking, false if fully reset
-	 */
-	public boolean shoot() {
-		double time = System.currentTimeMillis();
-		if(firstPass) {
-			time2 = System.currentTimeMillis();
-			firstPass = false;
-		}
-		if(!isKickLimit() && firstPass2) { //Kick
-			kick();
-		}else if(firstPass2) {
-			kickDelay = (time - time2) * 2;
-			time2 = System.currentTimeMillis();
-			firstPass2 = false;
-		}
-		if(time - time2 <= kickDelay && !firstPass2) { //Reset
-			resetKick();
-		}else if(!firstPass2) {
-			stopKick();
-			firstPass = true;
-			firstPass2 = true;
-			return false;
-		}
-		return true;
-	}
-	
-	public double getKickDelay() {
-		return kickDelay;
+		kicker.set(-0.5);
 	}
 	
 	public void stopKick() {
@@ -168,6 +124,9 @@ public class RobotShooter {
 	 */
 	public void calibrate() {
 		zero = rotate.getEncPosition() * 360 / 512;
+		zero -= 92;
+		zero2 = dinkArm.getEncPosition() * 360 / (512 * 4);
+		zero2 += 148;
 	}
 	
 	/**
@@ -180,6 +139,12 @@ public class RobotShooter {
 		return angle;
 	}
 	
+	public double getDinkAngle() {
+		double angle = dinkArm.getEncPosition() * 360 / (512 * 4);
+		angle -= zero2;
+		return -angle;
+	}
+	
 	/**
 	 * Sets the shooter to specified angle
 	 * **Must be in loop or shooter will not stop moving**
@@ -188,12 +153,12 @@ public class RobotShooter {
 	 * @return Returns true if still aiming, false if at target
 	 */
 	public boolean setAngle(double angle) {
-		double speed = 0.45;
 		double currentAngle = getAngle();
+		double speed = 0.75;
 		angle = (int)angle;
 		
-		if(currentAngle > 45)
-			speed = 0.2;
+		if(currentAngle > 15)
+			speed *= 0.75;
 		if(currentAngle > angle + 1) {
 			setRotate(speed);
 		}else if(currentAngle < angle - 1) {
@@ -206,7 +171,7 @@ public class RobotShooter {
 	}
 	
 	/**
-	 * Put this in the parameters for TalonSRX soft limits
+	 * Put this in the parameters for shooter TalonSRX soft limits
 	 * 
 	 * @param maxAngle Desired max/min in degrees
 	 * @return maxAngle Angle normalized to 0* and in Encoder degrees
@@ -214,9 +179,22 @@ public class RobotShooter {
 	public double setLimit(double maxAngle) {
 		double limit, newMax;
 		
-		//0 degrees = -11 on encoder
-		newMax = maxAngle * 512 / 360;
-		limit = newMax - 11;
+		newMax = maxAngle * 360 / 512;
+		limit = newMax + zero;
+		return limit;
+	}
+	
+	/**
+	 * Put this in the parameters for Dink/Dank TalonSRX soft limits
+	 * 
+	 * @param maxAngle Desired max/min in degrees
+	 * @return maxAngle Angle normalized to 0* and in Encoder degrees
+	 */
+	public double setArmLimit(double maxAngle) {
+		double limit, newMax;
+		
+		newMax = maxAngle * 360 / (512 * 4);
+		limit = newMax + zero2;
 		return limit;
 	}
 }

@@ -81,11 +81,11 @@ public class Vision {
 	 * @return The estimated distance to the target in feet.
 	 */
 	public double computeDistance (Image frame, ParticleReport report) {
-		double normalizedWidth, targetSize, ratio;
+		double normalizedWidth, targetSize;
 		NIVision.GetImageSizeResult size;
 		
 		size = NIVision.imaqGetImageSize(frame);
-		ratio = (report.BoundingRectRight - report.BoundingRectLeft) / (report.BoundingRectTop - report.BoundingRectBottom);
+		//double ratio = (report.BoundingRectRight - report.BoundingRectLeft) / (report.BoundingRectTop - report.BoundingRectBottom);
 		normalizedWidth = size.width / (report.BoundingRectRight - report.BoundingRectLeft);
 		targetSize = 23.5; //size of target
 		distance = targetSize * normalizedWidth / 12;
@@ -95,11 +95,11 @@ public class Vision {
 	public double computeLinearDistance() {
 		double distanceInches = (distance * 12);
 		
-		if(distanceInches < totalHeight) {
+		if(distanceInches < totalHeight)
 			linearDistance = (Math.sqrt((totalHeight*totalHeight) - (distanceInches*distanceInches))) / 12;
-		}else {
+		else
 			linearDistance = (Math.sqrt((distanceInches*distanceInches) - (totalHeight*totalHeight))) / 12;
-		}
+		
 		return linearDistance;
 	}
 	
@@ -107,10 +107,12 @@ public class Vision {
 		double x = distance;
 		double total = 0;
 		
-		while(x > 9) {
+		while(x > 8) {
 			total += 3;
-			if(distance > 13)
-				total += 1.5;
+			if(distance > 12)
+				total += 2;
+			if(distance > 14)
+				total += 2;
 			x -= 1;
 		}
 		return total;

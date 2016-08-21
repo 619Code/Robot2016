@@ -26,7 +26,7 @@ public class AutoTest {
 		
 		driveBase.setLeftWheels(-0.5);
 		driveBase.setRightWheels(-0.5);
-		Timer.delay(4);
+		Timer.delay(3.5);
 		driveBase.stop();
 	}
 }

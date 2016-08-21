@@ -6,13 +6,13 @@ import org.usfirst.frc.team619.hardware.Solenoid;
 public class ClimberBase {
 	
 	protected CANTalon winch, winch2;
-	protected Solenoid angleSol, climberSol;
+	protected Solenoid climberSol, climberReset;
 
-	public ClimberBase(CANTalon winch, CANTalon winch2, Solenoid angleSol, Solenoid climberSol) {
+	public ClimberBase(CANTalon winch, CANTalon winch2, Solenoid climberSol, Solenoid climberReset) {
 		this.winch = winch;
 		this.winch2 = winch2;
-		this.angleSol = angleSol;
 		this.climberSol = climberSol;
+		this.climberReset = climberReset;
 	}
 	
 	public CANTalon getWinch() {
@@ -23,32 +23,29 @@ public class ClimberBase {
 		return winch2;
 	}
 	
-	public Solenoid getAngleSolenoid() {
-		return angleSol;
-	}
-	
 	public Solenoid getClimberSolenoid() {
 		return climberSol;
 	}
 	
+	public Solenoid getResetSolenoid() {
+		return climberReset;
+	}
+	
 	public void setWinch(double percent) {
 		winch.set(percent);
-		winch2.set(-percent);
+		winch2.set(percent);
 	}
-	
-	public void moveClimber() {
-		angleSol.set(true);
-	}
-	
-	public void stopClimber() {
-		angleSol.set(false);
-	}
-	
-	public void fireClimber() {
+
+	public void extendClimber() {
 		climberSol.set(true);
 	}
 	
-	public void idleClimber() {
+	public void stopClimber() {
 		climberSol.set(false);
+		climberReset.set(false);
+	}
+	
+	public void resetClimber() {
+		climberReset.set(true);
 	}
 }

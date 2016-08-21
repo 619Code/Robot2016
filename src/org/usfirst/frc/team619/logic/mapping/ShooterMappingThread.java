@@ -20,8 +20,6 @@ public class ShooterMappingThread extends RobotThread {
 	private double scalePercent;
 	private double angle;
 	private boolean releasedSpeed;
-	private boolean kick;
-	private boolean aim;
 	
 	public ShooterMappingThread(Vision vision, RobotShooter robotShooter,
 			DriverStation driverStation, int period, ThreadManager threadManager) {
@@ -31,14 +29,13 @@ public class ShooterMappingThread extends RobotThread {
 		this.vision = vision;
 		scalePercent = 0.5;
 		releasedSpeed = true;
-		kick = false;
-		aim = false;
 	}
 
 	protected void cycle() { //Should generally use shooter controller
 		//Set Dink & Dank speed
 		switch(driverStation.getLeftJoystick().getPOV()) {
-		default:
+		case -1: 
+			releasedSpeed = true;
 			break;
 		case 45:
 		case 315:
@@ -56,30 +53,37 @@ public class ShooterMappingThread extends RobotThread {
 			}
 			releasedSpeed = false;
 			break;
-		case -1: 
-			releasedSpeed = true;
+		default:
 			break;
 		}
 		
-		double liftPercent = driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * scalePercent; //Dink & Dank
-		double rotatePercent  = driverStation.getLeftJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * (scalePercent); //Shooter
+		double liftPercent = driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * (-scalePercent); //Dink & Dank
+		double rotatePercent  = driverStation.getLeftJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * scalePercent; //Shooter
 		SmartDashboard.putNumber("Arm Scale Percent", scalePercent);
 		
 		//Dink and Dank arms
-		//robotShooter.setDankArm(liftPercent);
-		//robotShooter.setDinkArm(liftPercent);
-		
-		//Sets the current angle as 90
-		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON9)) {
-			robotShooter.calibrate();
+		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON4)) {
+			if(robotShooter.getDinkAngle() > 10) {
+				robotShooter.setDankArm(-0.5);
+				robotShooter.setDinkArm(-0.5);
+			}
+		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON9)) {
+			if(robotShooter.getDinkAngle() < 140) {
+				robotShooter.setDankArm(0.5);
+				robotShooter.setDankArm(0.5);
+			}
+		}else {
+			robotShooter.setDankArm(liftPercent);
+			robotShooter.setDinkArm(liftPercent);
 		}
+		SmartDashboard.putNumber("Dink Angle", robotShooter.getDinkAngle());
 		
 		//Intake
-		if(driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_TRIGGER) > 0) {
+		if(driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_TRIGGER) > 0)
 			robotShooter.setFlyWheel(driverStation.getLeftJoystick().getAxis(Joystick.Axis.LEFT_TRIGGER));
-		}else {
+		else
 			robotShooter.setFlyWheel(-driverStation.getLeftJoystick().getAxis(Joystick.Axis.RIGHT_TRIGGER));
-		}
+		
 		
 		//Manual kicker set and reset
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON1)) {
@@ -99,44 +103,20 @@ public class ShooterMappingThread extends RobotThread {
 		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON3)){
 			robotShooter.setAngle(90);
 			SmartDashboard.putNumber("Angle", 90);
-		}else {
+		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON4)){
+			robotShooter.setAngle(-10);
+			SmartDashboard.putNumber("Angle", -10);
+		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON7))
+			robotShooter.setAngle(50);
+		else {
 			robotShooter.setRotate(rotatePercent);
 			SmartDashboard.putNumber("Angle", robotShooter.getAngle());
 		}
-		SmartDashboard.putBoolean("On?", robotShooter.isKickLimit());
-//		//Manual reset of kicker - hold LB and press shoot to move
-//		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON5)) {
-//			aim = false;
-//			kick = false;
-//			if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON6)) {
-//				robotShooter.resetKick();
-//			}else {
-//				robotShooter.stopKick();
-//			}
-//		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON1)) {
-//			kick = true;
-//		}
-//		if(kick) { //Kick and reset after button press
-//			kick = robotShooter.shoot();
-//		}
-//		
-//		//Driver Controller -- Same button as auto aim
-//		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON1)) {
-//			aim = true;
-//		}
-//		if(aim) {
-//			angle = Math.atan((vision.castleHeight) / ((SmartDashboard.getNumber("Distance")) * 12)) * (180 / Math.PI);
-//			SmartDashboard.putNumber("Desired Angle", angle);
-//			aim = robotShooter.setAngle(angle);
-//		}else if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON3)) { //Set shooter vertical
-//			while(robotShooter.getRotate().getEncPosition() <= robotShooter.getRotate().getForwardSoftLimit()) {
-//				robotShooter.setRotate(1);
-//			}
-//			aim = false;
-//		}else {
-//			robotShooter.setRotate(rotatePercent);
-//		}		
-//		angle = Math.atan((vision.castleHeight - vision.yOffset) / (vision.getDistance() * 12)) * (180 / Math.PI);
-//		SmartDashboard.putNumber("Desired Angle", angle);
+		SmartDashboard.putNumber("Current Angle", robotShooter.getAngle());
+		
+		//Sets the current angle as 0
+		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON9)) {
+			robotShooter.calibrate();
+		}
 	}
 }

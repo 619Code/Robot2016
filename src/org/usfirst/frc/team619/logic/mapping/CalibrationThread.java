@@ -74,6 +74,9 @@ public class CalibrationThread extends RobotThread {
 		//Change max value
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON8)) {
 			switch(driverStation.getLeftJoystick().getPOV()) {
+			case -1: 
+				released = true;
+				break;
 			case 45:
 			case 315:
 			case 0:
@@ -102,9 +105,6 @@ public class CalibrationThread extends RobotThread {
 				}
 				released = false;
 				break;
-			case -1: 
-				released = true;
-				break;
 			default:
 				break;
 			}
@@ -113,6 +113,9 @@ public class CalibrationThread extends RobotThread {
 		//Change min value
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON7)) {
 			switch(driverStation.getLeftJoystick().getPOV()) {
+			case -1: 
+				released = true;
+				break;
 			case 45:
 			case 315:
 			case 0:
@@ -140,9 +143,6 @@ public class CalibrationThread extends RobotThread {
 					vision.setValueLow(vision.getValueLow()-5);
 				}
 				released1 = false;
-				break;
-			case -1: 
-				released1 = true;
 				break;
 			default:
 				break;

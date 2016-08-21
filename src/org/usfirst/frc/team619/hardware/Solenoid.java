@@ -11,6 +11,10 @@ public class Solenoid {
 		lastSetTime = System.currentTimeMillis();
 	}
 	
+	public edu.wpi.first.wpilibj.Solenoid getSolenoid() {
+		return solenoid;
+	}
+	
 	public boolean get(){
 		return solenoid.get();
 	}

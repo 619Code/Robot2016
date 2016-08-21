@@ -28,8 +28,6 @@ public class AutoShoot extends Action {
 	}
 
 	protected void cycle() {
-		boolean aim, kick;
-		double angle;
 		
 		driveBase.setLeftWheels(1);
 		driveBase.setRightWheels(1);
@@ -47,16 +45,11 @@ public class AutoShoot extends Action {
 			center = SmartDashboard.getNumber("Center");
 		}
 		 
-		angle = Math.atan((vision.castleHeight) / (SmartDashboard.getNumber("Distance") * 12)) * (180 / Math.PI);
-		aim = robotShooter.setAngle(angle);
-		while(aim) {
-			aim = robotShooter.setAngle(angle);
-		}
-		
-		kick = robotShooter.shoot();
-		while(kick) {
-			kick = robotShooter.shoot();
-		}
+		//angle = Math.atan((vision.castleHeight) / (SmartDashboard.getNumber("Distance") * 12)) * (180 / Math.PI);
+		//aim = robotShooter.setAngle(angle);
+		//while(aim) {
+			//aim = robotShooter.setAngle(angle);
+		//}
 		
 		robotShooter.setFlyWheel(0);
 		

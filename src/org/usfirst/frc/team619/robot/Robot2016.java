@@ -2,6 +2,7 @@ package org.usfirst.frc.team619.robot;
 
 import org.usfirst.frc.team619.hardware.CANTalon;
 import org.usfirst.frc.team619.hardware.LimitSwitch;
+import org.usfirst.frc.team619.hardware.PCMCompressor;
 import org.usfirst.frc.team619.hardware.Solenoid;
 import org.usfirst.frc.team619.hardware.Talon;
 import org.usfirst.frc.team619.logic.ThreadManager;
@@ -18,7 +19,7 @@ import org.usfirst.frc.team619.subsystems.Vision;
 import org.usfirst.frc.team619.subsystems.drive.RobotDriveBase;
 import org.usfirst.frc.team619.subsystems.sensor.SensorBase;
 
-import com.kauailabs.nav6.frc.IMUVeryAdvanced;
+import com.kauailabs.nav6.frc.IMUAdvanced;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -67,12 +68,6 @@ public class Robot2016 extends IterativeRobot {
 	LimitSwitch dankLimit;
 	LimitSwitch dinkLimit;
 	
-	//Temp
-	Talon frontLeft;
-	Talon backLeft;
-	Talon frontRight;
-	Talon backRight;
-	
 	//For Flywheel
 	CANTalon flyMotor;
 	CANTalon flyMotor2;
@@ -81,14 +76,15 @@ public class Robot2016 extends IterativeRobot {
 	LimitSwitch kickLimit;
 	
 	//Climber
-	CANTalon winchL;
-	CANTalon winchR;
-	Solenoid angleSol;
+	CANTalon winch;
+	CANTalon winch2;
 	Solenoid climberSol;
+	Solenoid climberReset;
 
 	//Control
 	SerialPort port;
-	IMUVeryAdvanced imu;
+	IMUAdvanced imu;
+	PCMCompressor compress;
 	
 	/**
      * This function is run when the robot is first started up and should be
@@ -122,54 +118,43 @@ public class Robot2016 extends IterativeRobot {
         //plug into Analog Input on RoboRio
         
         //plug into pneumatics module
-        angleSol = new Solenoid(0);
+    	compress = new PCMCompressor(1);
         climberSol = new Solenoid(1);
+        climberReset = new Solenoid(0);
         
         //serial port
 		try {
 			port = new SerialPort(57600,SerialPort.Port.kMXP);
-            imu = new IMUVeryAdvanced(port);
+            imu = new IMUAdvanced(port);
 		} catch(Exception ex) { }
         
         //CAN
-		//USE ON ACTUAL ROBOT
-//        leftMotor = new CANTalon(4);
-//        leftMotor2 = new CANTalon(5);
-//        rightMotor = new CANTalon(6);
-//        rightMotor2 = new CANTalon(7);
-//        
-//        dinkArm = new CANTalon(8);
-//        dankArm = new CANTalon(9);
-//        flyMotor = new CANTalon(2);
-//        flyMotor2 = new CANTalon(3);
-//        kicker = new CANTalon(1);
-//        rotate = new CANTalon(0);
-		
-		//Can 
-		//USE ON PRACTICE BOT
-		frontLeft = new Talon(3);
-		backLeft = new Talon(4);
-		frontRight = new Talon(1);
-		backRight = new Talon(2);
-		
-		flyMotor = new CANTalon(7);
-		flyMotor2 = new CANTalon(8);
-		kicker = new CANTalon(6);
-		rotate = new CANTalon(9);
-		
-		winchL = new CANTalon(10);
-		winchR = new CANTalon(11);
+		leftMotor = new CANTalon(6);
+		leftMotor2 = new CANTalon(7);
+		rightMotor = new CANTalon(8);
+		rightMotor2 = new CANTalon(9);
+        
+		dinkArm = new CANTalon(10);
+		dankArm = new CANTalon(11);
+		rotate = new CANTalon(0);
+		winch = new CANTalon(1);
+		winch2 = new CANTalon(2);
+		flyMotor = new CANTalon(3);
+		flyMotor2 = new CANTalon(4);
+		kicker = new CANTalon(5);
         
         //subsystems
-        //driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2, imu);
-		driveBase = new RobotDriveBase(frontLeft, backLeft, frontRight, backRight);
+        driveBase = new RobotDriveBase(leftMotor, rightMotor, leftMotor2, rightMotor2, imu);
         robotShooter = new RobotShooter(dinkArm, dankArm, flyMotor, flyMotor2, 
         		kicker, rotate, dankLimit, dinkLimit, kickLimit);
-        //rotate.setForwardSoftLimit(robotShooter.setLimit(90));
-        //rotate.setReverseSoftLimit(robotShooter.setLimit(-15));
-        climbBase = new ClimberBase(winchL, winchR, angleSol, climberSol);
+        climbBase = new ClimberBase(winch, winch2, climberSol, climberReset);
         sensorBase = new SensorBase();
         vision = new Vision();
+        
+        compress.start();
+        robotShooter.calibrate();
+        rotate.setForwardSoftLimit(robotShooter.setLimit(90));
+        rotate.setReverseSoftLimit(robotShooter.setLimit(-20));
         sensorBase.startVisionCamera();
     }
 
@@ -179,14 +164,8 @@ public class Robot2016 extends IterativeRobot {
     public void autonomousInit(){
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
     	
-    	visionThread = new VisionThread(sensorBase, vision, 0, threadManager);
     	auto = new AutoTest(driveBase, robotShooter);
-    	//autoShoot = new AutoShoot(vision, robotShooter, driveBase, 10, 15, threadManager);
-    	
-    	//visionThread.start();
-    	
     	auto.run();
-    	//autoShoot.start();
     }
     /**
      * This function is called when teleop is initialized
@@ -213,7 +192,7 @@ public class Robot2016 extends IterativeRobot {
      * In general you shouldn't use this
      */
     public void autonomousPeriodic() {
-
+    	
     }
     /**
      * This function is called periodically during operator control

@@ -27,7 +27,6 @@ public class VisionThread extends RobotThread {
 	private float areaMin = (float)AREA_MINIMUM;
 	private Image frame; //Unfiltered image
 	private Image binaryFrame; //filtered binary image
-	private Image displayFrame; //Filtered image, put on dashboard
 	private NIVision.Range GOAL_HUE_RANGE;	//Default hue range for yellow tote
 	private NIVision.Range GOAL_SAT_RANGE;	//Default saturation range for yellow tote
 	private NIVision.Range GOAL_VAL_RANGE;	//Default value range for yellow tote
@@ -43,17 +42,16 @@ public class VisionThread extends RobotThread {
 		m_id = sensorBase.getSession();
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 		binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
-		displayFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 		criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA, AREA_MINIMUM, 100.0, 0, 0);
+		
+    	GOAL_HUE_RANGE = new NIVision.Range(vision.getHueLow(), vision.getHueHigh());	//Default hue range for green LEDs on reflective tape
+    	GOAL_SAT_RANGE = new NIVision.Range(vision.getSatLow(), vision.getSatHigh());	//Default saturation range for green LEDs
+    	GOAL_VAL_RANGE = new NIVision.Range(vision.getValueLow(), vision.getValueHigh());	//Default value range for green LEDs
 	}
 	
 	protected void cycle(){
 		start = System.currentTimeMillis();
 		NIVision.IMAQdxGrab(m_id, frame, 1);
-		
-    	GOAL_HUE_RANGE = new NIVision.Range(vision.getHueLow(), vision.getHueHigh());	//Default hue range for green LEDs on reflective tape
-    	GOAL_SAT_RANGE = new NIVision.Range(vision.getSatLow(), vision.getSatHigh());	//Default saturation range for green LEDs
-    	GOAL_VAL_RANGE = new NIVision.Range(vision.getValueLow(), vision.getValueHigh());	//Default value range for green LEDs
     	
 		//Threshold the image looking for green
     	NIVision.imaqColorThreshold(binaryFrame, frame, 255, NIVision.ColorMode.HSV, GOAL_HUE_RANGE, GOAL_SAT_RANGE, GOAL_VAL_RANGE);
@@ -90,10 +88,9 @@ public class VisionThread extends RobotThread {
 			particles.sort(null);
 			
 			//Use elementAt(0) for largest particle
-			SmartDashboard.putNumber("Aspect", vision.AspectScore(particles.elementAt(0)));
-			SmartDashboard.putNumber("Area Score", vision.AreaScore(particles.elementAt(0)));
-			SmartDashboard.putNumber("Area", vision.getArea());
-			SmartDashboard.putNumber("Distance", vision.computeDistance(binaryFrame, particles.elementAt(0)));
+			vision.AreaScore(particles.elementAt(0));
+			vision.AspectScore(particles.elementAt(0));
+			vision.computeDistance(binaryFrame, particles.elementAt(0));
 			SmartDashboard.putNumber("Linear Distance", vision.computeLinearDistance());
 			SmartDashboard.putNumber("Center", vision.center(particles.elementAt(0)));		
 		}else {
@@ -101,6 +98,6 @@ public class VisionThread extends RobotThread {
 		}
     	
 		start = System.currentTimeMillis() - start;
-		SmartDashboard.putNumber("Update Hz", 1000 / start);
+		//SmartDashboard.putNumber("Update Hz", 1000 / start);
 	}
 }
