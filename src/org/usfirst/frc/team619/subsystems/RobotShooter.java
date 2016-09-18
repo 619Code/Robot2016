@@ -11,8 +11,9 @@ public class RobotShooter {
 	protected CANTalon flyMotor, flyMotor2, kicker, rotate;
 	protected LimitSwitch dankLimit, dinkLimit, kickLimit;
 	
-	private double zero = 0;
-	private double zero2 = 0;
+	//Encoder value for starting position
+	private double zeroShooter = 0;
+	private double zeroArms = 0;
 	
 	public RobotShooter(int dinkArmID, int dankArmID) {
 		dinkArm = new CANTalon(dinkArmID);
@@ -123,25 +124,29 @@ public class RobotShooter {
 	 * 90 degrees, such as at the beginning of a match. Use with caution.
 	 */
 	public void calibrate() {
-		zero = rotate.getEncPosition() * 360 / 512;
-		zero -= 92;
-		zero2 = dinkArm.getEncPosition() * 360 / (512 * 4);
-		zero2 += 148;
+		zeroShooter = rotate.getEncPosition() * 360 / 512;
+		zeroShooter -= 92;
+		zeroArms = dinkArm.getEncPosition() * 360 / (512 * 4);
+		zeroArms += 148;
 	}
 	
 	/**
 	 *  Gets current angle in degrees using 4x Encoder
-	 * @return Return angle
+	 * @return Shooter angle
 	 */
 	public double getAngle() {
 		double angle = rotate.getEncPosition() * 360 / 512;
-		angle -= zero;
+		angle -= zeroShooter;
 		return angle;
 	}
 	
+	/**
+	 * Returns current arm angles
+	 * @return Arm angle
+	 */
 	public double getDinkAngle() {
 		double angle = dinkArm.getEncPosition() * 360 / (512 * 4);
-		angle -= zero2;
+		angle -= zeroArms;
 		return -angle;
 	}
 	
@@ -180,7 +185,7 @@ public class RobotShooter {
 		double limit, newMax;
 		
 		newMax = maxAngle * 360 / 512;
-		limit = newMax + zero;
+		limit = newMax + zeroShooter;
 		return limit;
 	}
 	
@@ -194,7 +199,7 @@ public class RobotShooter {
 		double limit, newMax;
 		
 		newMax = maxAngle * 360 / (512 * 4);
-		limit = newMax + zero2;
+		limit = newMax + zeroArms;
 		return limit;
 	}
 }

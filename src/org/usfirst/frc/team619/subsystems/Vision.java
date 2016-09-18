@@ -92,6 +92,12 @@ public class Vision {
 		return distance;
 	}
 	
+	/**
+	 * Computes the distance from the camera to the goal by finding how far down the image is scaled from the normal size.
+	 * The method 'computeDistance' MUST be called before this method.
+	 * 
+	 * @return Distance to the goal
+	 */
 	public double computeLinearDistance() {
 		double distanceInches = (distance * 12);
 		
@@ -103,6 +109,12 @@ public class Vision {
 		return linearDistance;
 	}
 	
+	/**
+	 * Stepwise compensation for the shooter in order to counter air resistance. 
+	 * Inaccurate at many ranges and should be replaced by a real function
+	 * 
+	 * @return Distance to aim above the goal 
+	 */
 	public double getCompensation() {
 		double x = distance;
 		double total = 0;
@@ -171,9 +183,16 @@ public class Vision {
 		return bottom;
 	}
 	
-	//---------------------------------
-	//Set filter settings
-	//---------------------------------
+	/**
+	 * Set the HSV values according the the retro reflective light (Green)
+	 * 
+	 * @param hueLow
+	 * @param hueHigh
+	 * @param satLow
+	 * @param satHigh
+	 * @param valLow
+	 * @param valHigh
+	 */
 	public void setHSV(int hueLow, int hueHigh, int satLow, int satHigh, int valLow, int valHigh) {
 		setHueLow(hueLow);
 		setHueHigh(hueHigh);

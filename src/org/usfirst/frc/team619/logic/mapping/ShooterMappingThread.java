@@ -93,7 +93,8 @@ public class ShooterMappingThread extends RobotThread {
 		}else {
 			robotShooter.stopKick();
 		}
-
+		
+		//Control the shooter angle using either buttons or joystick
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON2)) {
 			double distance = (vision.getLinearDistance() * 12) - vision.xOffset;
 			
@@ -114,7 +115,7 @@ public class ShooterMappingThread extends RobotThread {
 		}
 		SmartDashboard.putNumber("Current Angle", robotShooter.getAngle());
 		
-		//Sets the current angle as 0
+		//Sets the current shooter and arm angle as 0
 		if(driverStation.getLeftJoystick().getButton(Joystick.Button.BUTTON9)) {
 			robotShooter.calibrate();
 		}

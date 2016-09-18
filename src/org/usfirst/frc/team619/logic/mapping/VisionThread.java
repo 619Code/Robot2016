@@ -12,7 +12,6 @@ import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
 
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionThread extends RobotThread {
@@ -27,9 +26,9 @@ public class VisionThread extends RobotThread {
 	private float areaMin = (float)AREA_MINIMUM;
 	private Image frame; //Unfiltered image
 	private Image binaryFrame; //filtered binary image
-	private NIVision.Range GOAL_HUE_RANGE;	//Default hue range for yellow tote
-	private NIVision.Range GOAL_SAT_RANGE;	//Default saturation range for yellow tote
-	private NIVision.Range GOAL_VAL_RANGE;	//Default value range for yellow tote
+	private NIVision.Range GOAL_HUE_RANGE;	//Default hue range for green
+	private NIVision.Range GOAL_SAT_RANGE;	//Default saturation range for green
+	private NIVision.Range GOAL_VAL_RANGE;	//Default value range for green
 	private NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
 	private NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
 	
@@ -37,7 +36,7 @@ public class VisionThread extends RobotThread {
 		super(period, threadManager);
 		this.vision = vision;
 		this.sensorBase = sensorBase;
-		this.vision.setHSV(80, 120, 220, 255, 20, 80);
+		this.vision.setHSV(80, 120, 220, 255, 20, 80); //Find these values through testing. Corresponds with green
     	
 		m_id = sensorBase.getSession();
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);

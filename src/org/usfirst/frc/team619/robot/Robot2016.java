@@ -173,6 +173,7 @@ public class Robot2016 extends IterativeRobot {
     public void teleopInit(){
     	threadManager.killAllThreads(); // DO NOT EVER REMOVE!!!
     	
+    	//Start threads
     	driveThread = new RobotMappingThread(vision, climbBase, driveBase, driverStation, 0, threadManager);
     	shooterThread = new ShooterMappingThread(vision, robotShooter, driverStation, 0, threadManager);
     	visionThread = new VisionThread(sensorBase, vision, 0, threadManager);

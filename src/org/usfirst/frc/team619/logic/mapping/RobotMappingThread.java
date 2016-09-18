@@ -68,30 +68,33 @@ public class RobotMappingThread extends RobotThread {
 		SmartDashboard.putNumber("Scale Percent", leftScalePercent);
 		double leftPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.LEFT_AXIS_Y) * (leftScalePercent); //Left Wheels
 		double rightPercent = driverStation.getRightJoystick().getAxis(Joystick.Axis.RIGHT_AXIS_Y) * (leftScalePercent); //Right Wheels
+		
+		//Actuate winch
 		double leftWinch = driverStation.getRightJoystick().getAxis(Joystick.Axis.LEFT_TRIGGER);
 		double rightWinch = driverStation.getRightJoystick().getAxis(Joystick.Axis.RIGHT_TRIGGER);
 		
-		//Do a 180
-		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON3)) {
-			double currentAngle = driveBase.getAngle();
-			if(releasedTurn) {
-				angle = currentAngle + 140;
-				releasedTurn = false;
-			}
-			
-			while(currentAngle < angle) {
-				if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON2))
-					break;
-				currentAngle = driveBase.getAngle();
-				if(angle > 360)
-					if(currentAngle <= 140)
-						currentAngle += 360;
-				driveBase.setLeftWheels(-0.75);
-				driveBase.setRightWheels(0.75);
-			}
-			driveBase.setLeftWheels(1);
-			driveBase.setRightWheels(-1);
-		}else if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON1)) {
+		//Do a 180 (Needs work)
+//		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON3)) {
+//			double currentAngle = driveBase.getAngle();
+//			if(releasedTurn) {
+//				angle = currentAngle + 140;
+//				releasedTurn = false;
+//			}
+//			
+//			while(currentAngle < angle) {
+//				if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON2))
+//					break;
+//				currentAngle = driveBase.getAngle();
+//				if(angle > 360)
+//					if(currentAngle <= 140)
+//						currentAngle += 360;
+//				driveBase.setLeftWheels(-0.75);
+//				driveBase.setRightWheels(0.75);
+//			}
+//			driveBase.setLeftWheels(1);
+//			driveBase.setRightWheels(-1);
+//		}else 
+		if(driverStation.getRightJoystick().getButton(Joystick.Button.BUTTON1)) {
 			driveBase.aim(vision.center(), leftScalePercent);
 		}else {
 			driveBase.setLeftWheels(leftPercent);
